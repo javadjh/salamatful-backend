@@ -42,13 +42,15 @@ export class WalletService {
             message: 'User Id is not defined',
         }
     }
-    async redeem (userId: string):Promise<{status: string;}>{
+    async redeem(userId: string): Promise<{ status: string; }> {
         const user = await this.userModel.findById(userId, 'name');
-        if (user){
-
-
+        if (user) {
+            const wallet = await this.walletModel.findOne({ userId: userId })
+            if (wallet.expiry < new Date()) {
+                return { status: "Ok" }
+            }
         }
-        return {status: "not ok"}
+        return {status:"not ok"}
     }    
 
 }
