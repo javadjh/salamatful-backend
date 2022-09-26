@@ -61,7 +61,7 @@ export class BlogService {
     }
   }
 
-  async getEntireBlogs(userId): Promise<any> {
+  async getEntireBlogs(): Promise<any> {
     try {
       const blogs = await this.blogModel.find({ lock: false });
       if (blogs) {

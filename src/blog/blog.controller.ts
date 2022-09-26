@@ -22,7 +22,7 @@ export class BlogController {
   }
 
   @Get()
-  async getAllBlogs(@Res() res: Response): Promise<any> {
-    return res.json(this.blogService.getEntireBlogs(res.locals.userId));
+  async getAllBlogs(): Promise<any> {
+    return await this.blogService.getEntireBlogs();
   }
 }
