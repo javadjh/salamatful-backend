@@ -96,5 +96,6 @@ export class BlogService {
         blog.img.path = `${config.serverURL}${config.blogImages}/${blog.img.path}`;
       }
     }
+    return blogs;
   }
 }
