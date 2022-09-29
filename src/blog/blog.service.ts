@@ -61,19 +61,40 @@ export class BlogService {
     }
   }
 
-  async getEntireBlogs(): Promise<any> {
+  async getEntireBlogs(recentLimit: number, suggestionsLimit: number): Promise<any> {
     try {
-      const blogs = await this.blogModel.find({ lock: false });
-      if (blogs) {
-        for (const blog of blogs) {
-          if (blog.img) {
-            blog.img.path = `${config.serverURL}${config.blogImages}/${blog.img.path}`;
-          }
-        }
-      }
-      return blogs;
+      const blogs = this.fixImagePaths(await this.blogModel.find({ lock: false }));
+      const recent = this.fixImagePaths(await this.getRecentBlogs(recentLimit));
+      const suggestions = this.fixImagePaths(await this.getSuggestedBlogs(suggestionsLimit));
+      return { blogs, recent, suggestions };
     } catch (error) {
       return { code: -1, message: "An error occurred" };
+    }
+  }
+
+  async getSuggestedBlogs(limit): Promise<any> {
+    try {
+      return await this.blogModel.find().sort({ _id: 1 }).limit(limit);
+    } catch (error) {
+      console.error(error);
+      return [];
+    }
+  }
+
+  async getRecentBlogs(limit: number): Promise<any> {
+    try {
+      return await this.blogModel.find().sort({ _id: -1 }).limit(limit);
+    } catch (error) {
+      console.error(error);
+      return [];
+    }
+  }
+
+  fixImagePaths(blogs: Array<any>): any {
+    for (const blog of blogs) {
+      if (blog.img) {
+        blog.img.path = `${config.serverURL}${config.blogImages}/${blog.img.path}`;
+      }
     }
   }
 }
