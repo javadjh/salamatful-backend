@@ -23,7 +23,17 @@ export class BlogController {
   }
 
   @Get()
-  async getAllBlogs(@Query() query): Promise<any> {
-    return await this.blogService.getEntireBlogs(Number.parseInt(query.recentLimit), Number.parseInt(query.suggestionsLimit), query.category);
+  async getAllBlogs(): Promise<any> {
+    return await this.blogService.getEntireBlogs();
+  }
+
+  @Get('/suggestions')
+  async getSuggestions(@Query() query) {
+    return await this.blogService.getSuggestedBlogs(query.limit, query.category);
+  }
+
+  @Get('/recent')
+  async getRecent(@Query() query) {
+    return await this.blogService.getRecentBlogs(query.limit);
   }
 }

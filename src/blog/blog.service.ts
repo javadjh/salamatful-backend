@@ -61,12 +61,9 @@ export class BlogService {
     }
   }
 
-  async getEntireBlogs(recentLimit: number, suggestionsLimit: number, category): Promise<any> {
+  async getEntireBlogs(): Promise<any> {
     try {
-      const blogs = this.fixImagePaths(await this.blogModel.find({ lock: false }));
-      const recent = this.fixImagePaths(await this.getRecentBlogs(recentLimit));
-      const suggestions = this.fixImagePaths(await this.getSuggestedBlogs(suggestionsLimit, category));
-      return { blogs, recent, suggestions };
+      return this.fixImagePaths(await this.blogModel.find({ lock: false }));
     } catch (error) {
       return { code: -1, message: "An error occurred" };
     }
@@ -74,7 +71,10 @@ export class BlogService {
 
   async getSuggestedBlogs(limit: number, category: string): Promise<any> {
     try {
-      return await this.blogModel.find({ cats: category }).sort({ _id: 1 }).limit(limit);
+      return this.fixImagePaths(await this.blogModel.find({
+        cats: category,
+        lock: false
+      }).sort({ _id: 1 }).limit(limit));
     } catch (error) {
       console.error(error);
       return [];
@@ -83,7 +83,7 @@ export class BlogService {
 
   async getRecentBlogs(limit: number): Promise<any> {
     try {
-      return await this.blogModel.find().sort({ _id: -1 }).limit(limit);
+      return this.fixImagePaths(await this.blogModel.find({ lock: false }).sort({ _id: -1 }).limit(limit));
     } catch (error) {
       console.error(error);
       return [];
