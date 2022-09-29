@@ -24,6 +24,6 @@ export class BlogController {
 
   @Get()
   async getAllBlogs(@Query() query): Promise<any> {
-    return await this.blogService.getEntireBlogs(Number.parseInt(query.recentLimit), Number.parseInt(query.suggestionsLimit));
+    return await this.blogService.getEntireBlogs(Number.parseInt(query.recentLimit), Number.parseInt(query.suggestionsLimit), query.category);
   }
 }
