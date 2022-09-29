@@ -27,6 +27,7 @@ import { AccessModule } from './access/access.module';
 import { PurchaseModule } from './purchase/purchase.module';
 import { DynamicsModule } from './dynamics/dynamics.module';
 import { WalletModule } from './wallet/wallet.module';
+import { SocialModule } from './social/social.module';
 
 @Module({
   imports: [
@@ -55,6 +56,7 @@ import { WalletModule } from './wallet/wallet.module';
     PurchaseModule,
     DynamicsModule,
     WalletModule,
+    SocialModule,
   ],
   controllers: [AppController],
   providers: [AppService],
