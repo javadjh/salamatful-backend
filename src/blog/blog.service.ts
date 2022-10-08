@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, NotFoundException } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
 import config from "src/config";
@@ -14,22 +14,21 @@ export class BlogService {
   }
 
   async findBySlug(params, userId): Promise<any> {
-    try {
-      const { slug } = params;
-      const user = userId ? await this.userModel.findById(userId, "sub") : null;
-      const subscribed =
-        user && user.sub && user.sub.getTime() >= new Date().getTime();
-      const blog = await this.blogModel.findOne({ slug });
-      if (blog && blog.img) {
+    const { slug } = params;
+    const user = userId ? await this.userModel.findById(userId, "sub") : null;
+    const subscribed =
+      user && user.sub && user.sub.getTime() >= new Date().getTime();
+    const blog = await this.blogModel.findOne({ slug });
+    if (blog) {
+      if (blog.img) {
         blog.img.path = `${config.serverURL}${config.blogImages}/${blog.img.path}`;
       }
       if (blog.lock && subscribed) {
         blog.lock = false;
       }
       return blog;
-    } catch (error) {
-      return { code: -1, message: "Error" };
     }
+    throw new NotFoundException("Invalid Slug");
   }
 
   async getCategories(): Promise<any> {
