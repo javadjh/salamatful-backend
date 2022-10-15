@@ -9,6 +9,7 @@ import { MessagesDocument } from 'src/message/message.schema';
 import { PriceDocument } from 'src/price/price.schema';
 import { PurchaseDocument } from 'src/purchase/purchase.schema';
 import { UserDocument } from 'src/user/user.schema';
+import { WalletDocument } from "../wallet/wallet.schema";
 
 export const zarinpalRequestURL = 'https://api.zarinpal.com/pg/v4/payment/request.json';
 export const zarinpalVerifyURL = 'https://api.zarinpal.com/pg/v4/payment/verify.json';
@@ -31,6 +32,7 @@ export class PaymentService {
     @InjectModel('Message') private messageModel: Model<MessagesDocument>,
     @InjectModel('Course') private courseModel: Model<MessagesDocument>,
     @InjectModel('Purchase') private purchaseModel: Model<PurchaseDocument>,
+    @InjectModel('Wallet') private walletModel: Model<WalletDocument>,
   ) { }
   async getAuthorityCode(body, userId): Promise<any> {
     try {
@@ -95,11 +97,19 @@ export class PaymentService {
           });
 
           let days = plan.days;
+          let type = plan.type;
           if (plan.extraDays) {
             days += plan.extraDays;
           }
           const expiryDate = new Date();
           expiryDate.setDate(expiryDate.getDate() + days);
+          let wallet = await this.walletModel.findOne({ userId: dataExists._id })
+          if (type === 'Investment' && wallet) {
+            wallet.cash += parseInt(dataExists.amount)
+            wallet.planType = days.toString();
+            wallet.expiry = expiryDate;
+            await wallet.save();
+          }
           for (let courseId of plan.courses) {
             const course = await this.courseModel.findById(courseId);
             if (course) {

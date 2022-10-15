@@ -8,6 +8,7 @@ import { DiscountSchema } from 'src/discount/discount.schema';
 import { MessagesSchema } from 'src/message/message.schema';
 import { CourseSchema } from 'src/course/course.schema';
 import { PurchaseSchema } from 'src/purchase/purchase.schema';
+import { WalletSchema } from "../wallet/wallet.schema";
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { PurchaseSchema } from 'src/purchase/purchase.schema';
       { name: 'Message', schema: MessagesSchema },
       { name: 'Course', schema: CourseSchema },
       { name: 'Purchase', schema: PurchaseSchema },
+      { name: 'Wallet', schema: WalletSchema },
     ]),
   ],
   controllers: [PaymentController],
