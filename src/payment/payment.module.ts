@@ -9,11 +9,13 @@ import { MessagesSchema } from 'src/message/message.schema';
 import { CourseSchema } from 'src/course/course.schema';
 import { PurchaseSchema } from 'src/purchase/purchase.schema';
 import { WalletSchema } from "../wallet/wallet.schema";
+import { PaymentSchema } from "./payment.schema";
 
 @Module({
   imports: [
     MongooseModule.forFeature([
       { name: 'User', schema: UserSchema },
+      { name: 'Payment', schema: PaymentSchema },
       { name: 'Price', schema: PriceSchema },
       { name: 'Discount', schema: DiscountSchema },
       { name: 'Message', schema: MessagesSchema },

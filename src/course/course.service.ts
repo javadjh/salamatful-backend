@@ -47,7 +47,7 @@ export class CourseService {
         }
         galleries = await this.galleryModel.find({ cId: course.id });
         for (const gallery of galleries) {
-          if (gallery.imgs) {
+          if (gallery && gallery.imgs) {
             for (const img of gallery.imgs) {
               img.path = `${config.serverURL}${config.galleryImages}/${img.path}`;
             }
@@ -58,7 +58,7 @@ export class CourseService {
         }
         audios = course.audios;
         for (let audio of audios) {
-          audio = await this.audioModel.findById(audio);
+          audio = audio && await this.audioModel.findById(audio);
           if (audio) {
             if (audio.file) {
               audio.file.path = `${config.serverURL}${config.defaultImages}/${audio.file.path}`;
@@ -71,7 +71,7 @@ export class CourseService {
         }
         videos = course.videos;
         for (let video of videos) {
-          video = await this.videoModel.findById(video);
+          video = video && await this.videoModel.findById(video);
           if (video) {
             if (video.file) {
               video.file.path = `${config.serverURL}${config.defaultImages}/${video.file.path}`;
@@ -97,16 +97,17 @@ export class CourseService {
           "_id title category lock img slug"
         );
         blogs.map((blog) => {
-          if (blog.img) {
+          if (blog && blog.img) {
             blog.img.path = `${config.serverURL}${config.blogImages}/${blog.img.path}`;
           }
-          if (blog.lock && subscribed) {
+          if (blog && blog.lock && subscribed) {
             blog.lock = false;
           }
         });
       }
       return { course, audios: audiosInOrder, videos: videoCategories, blogs, galleries };
     } catch (error) {
+      console.error(error);
       return { code: -1, message: "Error occurred" };
     }
   }
