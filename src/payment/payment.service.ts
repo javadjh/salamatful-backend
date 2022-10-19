@@ -114,7 +114,11 @@ export class PaymentService {
             wallet.cash += parseInt(dataExists.amount);
             wallet.planType = days.toString();
             wallet.expiry = expiryDate;
-            await wallet.save();
+            await this.walletModel.updateOne({ id: wallet.id }, {
+              cash: wallet.cash,
+              planType: wallet.planType,
+              expiry: wallet.expiry,
+            });
           }
           for (let courseId of plan.courses) {
             const course = await this.courseModel.findById(courseId);
@@ -163,9 +167,9 @@ export class PaymentService {
           }
         }
       }
-      // redirecy user to the wallet page after buying the subscription
-      return response.redirect(dataExists.callbackURL);
+      return response.redirect('https://salamatful.ir/wallet-page');
     } catch (error) {
+      console.error(error)
       return {
         code: -1,
         message: "Error occurred while checking payment status."
