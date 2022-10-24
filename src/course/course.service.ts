@@ -45,6 +45,12 @@ export class CourseService {
         if (course.bg) {
           course.bg.path = `${config.serverURL}${config.courseImages}/${course.bg.path}`;
         }
+        if (course.audioBg) {
+          course.audioBg.path = `${config.serverURL}${config.courseImages}/${course.audioBg.path}`;
+        }
+        if (course.videoBg) {
+          course.videoBg.path = `${config.serverURL}${config.courseImages}/${course.videoBg.path}`;
+        }
         galleries = await this.galleryModel.find({ cId: course.id });
         for (const gallery of galleries) {
           if (gallery && gallery.imgs) {
