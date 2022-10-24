@@ -29,6 +29,8 @@ export class Video {
     lock: Boolean;
     @Prop()
     category: string;
+    @Prop()
+    except: boolean;
     @Prop({ default: Date.now })
     cDate: Date;
 }
