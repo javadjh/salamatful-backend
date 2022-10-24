@@ -13,7 +13,7 @@ export class BackgroundsService {
         try {
             const { type, time } = body;
             if (type && time) {
-                const bgs = await this.backgroundModel.find({ $and: [{ types: { $in: type } }, { times: { $in: time } }] }, "file url");
+                const bgs = await this.backgroundModel.find({ $and: [{ types: { $in: type } }, { times: { $in: time } }] }, "file url wide");
                 const index = Math.floor(Math.random() * bgs.length);
                 const bg = bgs[index];
                 if (bg && bg.file) {

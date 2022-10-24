@@ -16,5 +16,7 @@ export class Background {
     path: string;
     mime: string;
   };
+  @Prop()
+  wide: boolean;
 }
 export const BackgroundSchema = SchemaFactory.createForClass(Background);
