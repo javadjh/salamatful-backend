@@ -20,6 +20,7 @@ import * as uuid from 'uuid';
 import { ProgressDocument } from 'src/progress/progress.schema';
 import { AudioDocument } from 'src/audio/audio.schema';
 import { VideoDocument } from 'src/video/video.schema';
+import { WalletDocument } from "../wallet/wallet.schema";
 
 export const farazSmsURL = 'https://ippanel.com/api/select';
 export const smsUsername = '09396057575';
@@ -44,6 +45,7 @@ export class UserService {
     @InjectModel('Progress') private progressModel: Model<ProgressDocument>,
     @InjectModel('Audio') private audioModel: Model<AudioDocument>,
     @InjectModel('Video') private videoModel: Model<VideoDocument>,
+    @InjectModel('Wallet') private walletModel: Model<WalletDocument>,
   ) { }
 
   async verifyPhone(body): Promise<any> {
@@ -134,13 +136,14 @@ export class UserService {
         phone: phone,
       });
       if (phone && tempUserExists) {
-        await this.UserModel.create({
+        const newUser = await this.UserModel.create({
           name: name,
           role: 'user',
           pass: `${this.hashPassword(pass)}`,
           phone: tempUserExists.phone,
           validated: true,
         });
+        await this.walletModel.create({ userId: newUser.id });
         await this.tempUserModel.deleteMany({ phone: phone });
         const user = await this.UserModel.findOne(
           { phone: phone },
@@ -287,7 +290,7 @@ export class UserService {
         let minsOfMeditaion = 0;
         let minsOfPractice = 0;
         audios.map(async (audio) => {
-          const document = await this.audioModel.findById(audio.oId, 'length');
+          const document = await this.audioModel.findById(audio.oId, 'length type');
           if (document.type === 'meditation') {
             minsOfMeditaion += document.length;
           } else if (document.type === 'practice') {
@@ -296,7 +299,7 @@ export class UserService {
           minsOfAudio += document.length;
         });
         videos.map(async (video) => {
-          const document = await this.videoModel.findById(video.oId, 'length');
+          const document = await this.videoModel.findById(video.oId, 'length type');
           if (document.type === 'meditation') {
             minsOfMeditaion += document.length;
           } else if (document.type === 'practice') {

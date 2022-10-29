@@ -9,6 +9,7 @@ import { TempUserSchema } from './tempUser.schema';
 import { ProgressSchema } from 'src/progress/progress.schema';
 import { AudioSchema } from 'src/audio/audio.schema';
 import { VideoSchema } from 'src/video/video.schema';
+import { WalletSchema } from "../wallet/wallet.schema";
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { VideoSchema } from 'src/video/video.schema';
       { name: 'Progress', schema: ProgressSchema },
       { name: 'Audio', schema: AudioSchema },
       { name: 'Video', schema: VideoSchema },
+      { name: 'Wallet', schema: WalletSchema },
     ]),
   ],
   controllers: [UserController],
