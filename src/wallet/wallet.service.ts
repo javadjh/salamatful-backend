@@ -18,6 +18,13 @@ export class WalletService {
     return await this.walletModel.create({ cardNumber: body.cardNumber, userId });
   }
 
+  async updateCardNumber(userId: string, body) {
+    const user = await this.userModel.findById(userId, "id name");
+    if (!user) return { code: -1, message: "User does not exist" };
+    await this.walletModel.updateOne({ userId }, { cardNumber: body.cardNumber });
+    return { code: 1, message: 'Card number updated' }
+  }
+
   async getInfo(userId: string): Promise<{ plan: string; expiry: Date; cash: number; name: string; } | { code: number; message: string; }> {
     const user = await this.userModel.findById(userId, "name");
     if (user) {

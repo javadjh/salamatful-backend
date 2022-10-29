@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Res } from "@nestjs/common";
+import { Body, Controller, Get, Post, Put, Res } from "@nestjs/common";
 import { Response } from "express";
 import { WalletService } from "./wallet.service";
 
@@ -10,6 +10,11 @@ export class WalletController {
   @Post("/create")
   async createWallet(@Res() res: Response, @Body() body) {
     return res.json(await this.walletService.createWallet(res.locals.userId, body));
+  }
+
+  @Put('/update')
+  async updateWallet(@Res() res: Response, @Body() body) {
+    return res.json(await this.walletService.updateCardNumber(res.locals.userId, body));
   }
 
   @Get("/info")
