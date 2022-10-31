@@ -25,7 +25,7 @@ export class WalletService {
     return { code: 1, message: 'Card number updated' }
   }
 
-  async getInfo(userId: string): Promise<{ plan: string; expiry: Date; cash: number; name: string; } | { code: number; message: string; }> {
+  async getInfo(userId: string): Promise<{ plan: string; cardNumber: string; expiry: Date; cash: number; name: string; } | { code: number; message: string; }> {
     const user = await this.userModel.findById(userId, "name");
     if (user) {
       const wallet = await this.walletModel.findOne({ userId });
@@ -33,6 +33,7 @@ export class WalletService {
       return {
         name: user.name,
         cash: wallet?.cash,
+        cardNumber: wallet?.cardNumber,
         expiry: wallet?.expiry,
         plan: wallet?.planType
       };

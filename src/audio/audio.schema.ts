@@ -27,6 +27,8 @@ export class Audio {
     type: string;
     @Prop()
     except: boolean;
+    @Prop()
+    seen: boolean;
     @Prop({ default: Date.now })
     cDate: Date;
 }

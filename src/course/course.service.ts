@@ -1,7 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
-import { AccessDocument } from "src/access/access.schema";
 import { AudioDocument } from "src/audio/audio.schema";
 import { BlogDocument } from "src/blog/blog.schema";
 import config from "src/config";
@@ -11,6 +10,7 @@ import { UserDocument } from "src/user/user.schema";
 import { VideoDocument } from "src/video/video.schema";
 import { CourseDocument } from "./course.schema";
 import { DynamicsDocument } from "../dynamics/dynamics.schema";
+import { ProgressDocument } from "../progress/progress.schema";
 
 @Injectable()
 export class CourseService {
@@ -22,7 +22,8 @@ export class CourseService {
     @InjectModel("Audio") private audioModel: Model<AudioDocument>,
     @InjectModel("Gallery") private galleryModel: Model<GalleryDocument>,
     @InjectModel("Purchase") private purchaseModel: Model<PurchaseDocument>,
-    @InjectModel("Dynamics") private dynamicsModel: Model<DynamicsDocument>
+    @InjectModel("Dynamics") private dynamicsModel: Model<DynamicsDocument>,
+    @InjectModel("Progress") private progressModel: Model<ProgressDocument>,
   ) {
   }
 
@@ -72,6 +73,10 @@ export class CourseService {
             if (audio.lock && subscribed) {
               audio.lock = false;
             }
+            const hasProgress = await this.progressModel.findOne({ uId: userId, oId: audio.id });
+            if (hasProgress) {
+              audio.seen = true;
+            }
             audiosInOrder.push(audio);
           }
         }
@@ -87,6 +92,10 @@ export class CourseService {
             }
             if (video.lock && subscribed) {
               video.lock = false;
+            }
+            const hasProgress = await this.progressModel.findOne({ uId: userId, oId: video.id });
+            if (hasProgress) {
+              video.seen = true;
             }
             if (video.category) {
               const index = videoCategories.map(cat => cat.categoryName).indexOf(video.category);

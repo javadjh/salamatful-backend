@@ -10,6 +10,7 @@ import { AudioSchema } from 'src/audio/audio.schema';
 import { GallerySchema } from 'src/gallery/gallery.schema';
 import { PurchaseSchema } from 'src/purchase/purchase.schema';
 import {DynamicsSchema} from "../dynamics/dynamics.schema";
+import { ProgressSchema } from "../progress/progress.schema";
 
 @Module({
   imports: [MongooseModule.forFeature([
@@ -21,6 +22,7 @@ import {DynamicsSchema} from "../dynamics/dynamics.schema";
     { name: "Gallery", schema: GallerySchema },
     { name: "Purchase", schema: PurchaseSchema },
     { name: "Dynamics", schema: DynamicsSchema },
+    { name: "Progress", schema: ProgressSchema },
   ])],
   controllers: [CourseController],
   providers: [CourseService],
