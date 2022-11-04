@@ -23,7 +23,7 @@ export class CourseService {
     @InjectModel("Gallery") private galleryModel: Model<GalleryDocument>,
     @InjectModel("Purchase") private purchaseModel: Model<PurchaseDocument>,
     @InjectModel("Dynamics") private dynamicsModel: Model<DynamicsDocument>,
-    @InjectModel("Progress") private progressModel: Model<ProgressDocument>,
+    @InjectModel("Progress") private progressModel: Model<ProgressDocument>
   ) {
   }
 
@@ -34,8 +34,12 @@ export class CourseService {
       const course = await this.courseModel.findOne({ slug });
       const user = userId ? await this.userModel.findById(userId, "sub") : null;
       let galleries = [];
-      const subscribed =
-        user && user.sub && user.sub.getTime() >= new Date().getTime();
+      let purchased = user && course && await this.purchaseModel.findOne({
+        userId,
+        courseId: course.id,
+        to: { $gte: new Date() }
+      });
+      const subscribed = user && purchased;
       let audios, videos, blogs;
       let audiosInOrder = [];
       if (course) {

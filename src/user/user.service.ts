@@ -53,12 +53,6 @@ export class UserService {
       let { phone } = body;
       phone = normalizePhoneNumber(phone);
       if (phone) {
-        // let code = '';
-        // if (isDev()) {
-        //   code = '12345';
-        // } else {
-        //   code = `${Math.floor(Math.random() * 90000) + 10000}`;
-        // }
         const code = `${Math.floor(Math.random() * 90000) + 10000}`;
         const userExists = await this.UserModel.findOne({
           phone: phone,
@@ -339,11 +333,7 @@ export class UserService {
    * @param data
    */
   async sendSMS(data): Promise<any> {
-    // console.log('hey');
     try {
-      // if (isDev()) {
-      //   return { code: 1, message: '' };
-      // }
       let { phone, code } = data;
       phone = normalizePhoneNumber(phone);
 

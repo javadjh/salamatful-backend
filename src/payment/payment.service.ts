@@ -91,6 +91,7 @@ export class PaymentService {
         { authority: Authority },
         "_id authority amount priceId phone callbackURL"
       );
+      console.log(dataExists)
       if (dataExists) {
         const res = await axios.post(zarinpalRequestURL, {
           merchant_id: merchantId,
@@ -107,25 +108,33 @@ export class PaymentService {
           if (plan.extraDays) {
             days += plan.extraDays;
           }
+          console.log("type:\t" + type);
           const expiryDate = new Date();
           expiryDate.setDate(expiryDate.getDate() + days);
+          console.log("expiry date:\t" + expiryDate);
           let wallet = await this.walletModel.findOne({ userId: dataExists._id });
+          console.log("Wallet:");
+          console.log(wallet);
           if (type === "Investment" && wallet) {
             wallet.cash += parseInt(dataExists.amount);
             wallet.planType = days.toString();
             wallet.expiry = expiryDate;
+            console.log("New Wallet:");
+            console.log(wallet);
             await this.walletModel.updateOne({ id: wallet.id }, {
               cash: wallet.cash,
               planType: wallet.planType,
-              expiry: wallet.expiry,
+              expiry: wallet.expiry
             });
           }
+          console.log("Courses:");
+          console.log(plan.courses);
           for (let courseId of plan.courses) {
             const course = await this.courseModel.findById(courseId);
             if (course) {
               const date = new Date();
               date.setDate(date.getDate() + days);
-              await this.purchaseModel.create({ courseId, userId: dataExists._id, at: date });
+              await this.purchaseModel.create({ courseId, userId: dataExists._id, at: new Date(), to: date });
             }
           }
           await this.userModel.updateOne(
@@ -139,37 +148,37 @@ export class PaymentService {
             userId: dataExists._id,
             plan: plan._id
           });
-          let coupon;
-          if (plan.couponGift)
-            coupon = await this.discountModel.findById(plan.couponGift);
-          const messages = await this.messageModel.find();
-          let messageArr: string[] = [];
-          if (plan.extraDays != 0 || plan.couponGift) {
-            messages.forEach((msg) => {
-              if (msg.key == MessagingEnum.MAINTEXT) {
-                messageArr.unshift(msg.text);
-              }
-              if (msg.key == MessagingEnum.EXTRADAYS) {
-                messageArr.push(
-                  msg.text.replace("[AMOUNT]", plan.extraDays.toString())
-                );
-              }
-              if (msg.key == MessagingEnum.COUPON && plan.couponGift) {
-                messageArr.push(msg.text.replace("[AMOUNT]", coupon.code));
-              }
-            });
-            if (messageArr.length) {
-              kavenegar.sendSucceedPurchaseMessage({
-                phone: dataExists.phone,
-                message: messageArr.join("\n")
-              });
-            }
-          }
+          // let coupon;
+          // if (plan.couponGift)
+          //   coupon = await this.discountModel.findById(plan.couponGift);
+          // const messages = await this.messageModel.find();
+          // let messageArr: string[] = [];
+          // if (plan.extraDays != 0 || plan.couponGift) {
+          //   messages.forEach((msg) => {
+          //     if (msg.key == MessagingEnum.MAINTEXT) {
+          //       messageArr.unshift(msg.text);
+          //     }
+          //     if (msg.key == MessagingEnum.EXTRADAYS) {
+          //       messageArr.push(
+          //         msg.text.replace("[AMOUNT]", plan.extraDays.toString())
+          //       );
+          //     }
+          //     if (msg.key == MessagingEnum.COUPON && plan.couponGift) {
+          //       messageArr.push(msg.text.replace("[AMOUNT]", coupon.code));
+          //     }
+          //   });
+          //   if (messageArr.length) {
+          //     kavenegar.sendSucceedPurchaseMessage({
+          //       phone: dataExists.phone,
+          //       message: messageArr.join("\n")
+          //     });
+          //   }
+          // }
         }
       }
-      return response.redirect('https://salamatful.ir/wallet-page');
+      return response.redirect("https://salamatful.ir/wallet-page");
     } catch (error) {
-      console.error(error)
+      console.error(error);
       return {
         code: -1,
         message: "Error occurred while checking payment status."
