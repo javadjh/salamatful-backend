@@ -41,6 +41,8 @@ export class Course {
   hasAccess: boolean;
   @Prop()
   desc: string;
+  @Prop()
+  meta: string;
   @Prop({ default: 0 })
   likes: number;
   @Prop({ default: new Date() })
