@@ -47,7 +47,7 @@ export class CategoryService {
           for (let courseId of category.course) {
             let course = await this.courseModel.findById(
               courseId,
-              '_id name bg likes slug',
+              '_id name bg likes slug meta',
             );
             if (course && course.bg) {
               course.bg.path = `${config.serverURL}${config.courseImages}/${course.bg.path}`;
