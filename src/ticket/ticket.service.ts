@@ -36,4 +36,13 @@ export class TicketService {
       return { code: -1, msg: 'Error occurred while getting tickets' };
     }
   }
+
+  async newEmailTicket(body) {
+    try {
+      return 'Fuck You:D'
+    } catch(error) {
+      console.log(error)
+      return { code: -1, message: 'An error occurred' }
+    }
+  }
 }

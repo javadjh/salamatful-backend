@@ -10,5 +10,7 @@ export class Purchase {
     courseId: string;
     @Prop({ type: Date })
     at: Date;
+    @Prop({ type: Date })
+    to: Date
 }
 export const PurchaseSchema = SchemaFactory.createForClass(Purchase);

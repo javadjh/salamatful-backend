@@ -1,6 +1,8 @@
-import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
+import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
+import { Document } from "mongoose";
+
 export type CourseDocument = Course & Document;
+
 @Schema()
 export class Course {
   @Prop({ required: true })
@@ -9,6 +11,18 @@ export class Course {
   slug: string;
   @Prop({ type: Object })
   bg: {
+    name: string;
+    path: string;
+    mime: string;
+  };
+  @Prop({ type: Object })
+  audioBg: {
+    name: string;
+    path: string;
+    mime: string;
+  };
+  @Prop({ type: Object })
+  videoBg: {
     name: string;
     path: string;
     mime: string;
@@ -27,9 +41,12 @@ export class Course {
   hasAccess: boolean;
   @Prop()
   desc: string;
+  @Prop()
+  meta: string;
   @Prop({ default: 0 })
   likes: number;
   @Prop({ default: new Date() })
   cDate: Date;
 }
+
 export const CourseSchema = SchemaFactory.createForClass(Course);

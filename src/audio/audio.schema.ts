@@ -25,6 +25,10 @@ export class Audio {
     lock: Boolean;
     @Prop({ trim: true })
     type: string;
+    @Prop()
+    except: boolean;
+    @Prop()
+    seen: boolean;
     @Prop({ default: Date.now })
     cDate: Date;
 }

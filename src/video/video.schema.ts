@@ -20,6 +20,8 @@ export class Video {
         mime: string
     };
     @Prop()
+    seen: boolean;
+    @Prop()
     url: string;
     @Prop({ default: 0 })
     length: number;
@@ -29,6 +31,8 @@ export class Video {
     lock: Boolean;
     @Prop()
     category: string;
+    @Prop()
+    except: boolean;
     @Prop({ default: Date.now })
     cDate: Date;
 }

@@ -5,7 +5,7 @@ class Kavenegar {
   async sendVerificationSMS({ phone, code }) {
     let endpoint = this._generateEndpoint('verify/lookup.json');
 
-    console.log({ phone, code, apiKey: getEnv('KAVENEGAR_API_KEY') });
+    // console.log({ phone, code, apiKey: getEnv('KAVENEGAR_API_KEY') });
 
     return await this._sendPostRequest(endpoint, {
       receptor: phone,
@@ -17,7 +17,7 @@ class Kavenegar {
   async sendForgotPasswordCode({ phone, code }) {
     let endpoint = this._generateEndpoint('verify/lookup.json');
 
-    console.log({ phone, code, apiKey: getEnv('KAVENEGAR_API_KEY') });
+    // console.log({ phone, code, apiKey: getEnv('KAVENEGAR_API_KEY') });
 
     return await this._sendPostRequest(endpoint, {
       receptor: phone,

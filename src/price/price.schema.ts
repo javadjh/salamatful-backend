@@ -17,6 +17,8 @@ export class Price {
   @Prop()
   badge: string;
   @Prop()
+  type: string;
+  @Prop()
   extraDays: number;
   @Prop()
   couponGift: string;
