@@ -29,6 +29,7 @@ import { DynamicsModule } from './dynamics/dynamics.module';
 import { WalletModule } from './wallet/wallet.module';
 import { SocialModule } from './social/social.module';
 import { LikeModule } from './like/like.module';
+import { RateModule } from './rate/rate.module';
 
 @Module({
   imports: [
@@ -59,6 +60,7 @@ import { LikeModule } from './like/like.module';
     WalletModule,
     SocialModule,
     LikeModule,
+    RateModule,
   ],
   controllers: [AppController],
   providers: [AppService],
