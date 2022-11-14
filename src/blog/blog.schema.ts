@@ -17,6 +17,7 @@ export class Blog {
   meta: string;
   @Prop()
   pDate: Date;
+  // category
   @Prop({ trim: true })
   cats: string;
   @Prop({ type: Object })

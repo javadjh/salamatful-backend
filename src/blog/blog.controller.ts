@@ -39,6 +39,6 @@ export class BlogController {
 
   @Get("/all-blogs")
   async getAllBlogsWithCategory(@Res() res: Response) {
-    return await this.blogService.getAllBlogsWithCategory(res.locals.userId);
+    res.json(this.blogService.getAllBlogsWithCategory(res.locals.userId));
   }
 }

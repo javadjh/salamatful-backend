@@ -93,25 +93,29 @@ export class BlogService {
 
   async getAllBlogsWithCategory(userId: string): Promise<any> {
     try {
-      let allBlogs = await this.blogModel.find({}, "_id slug courseId title author pDate img lock");
-      allBlogs = this.fixImagePaths(allBlogs);
-      let results = []
-      for (let blog of allBlogs) {
-        if (blog.lock) {
-          let purchased = userId && await this.purchaseModel.findOne({
-            userId,
-            courseId: blog.courseId,
-            to: { $gte: new Date() }
-          });
-          if (purchased) blog.lock = false;
+      let result = []
+      let belogdon = await this.blogModel.find()
+      belogdon = this.fixImagePaths(belogdon)
+      for(let blog of belogdon) {
+        if (blog.lock && blog.courseId) {
+          const userExists = await this.purchaseModel.findOne(
+            {
+              userId: userId,
+              to: { $gte: new Date() },
+              courseId: blog.courseId,
+            }
+          )
+          if (userExists) {
+            blog.lock = false;
+          }
         }
-        if (results[blog.cats]) {
-          results[blog.cats].push(blog)
+        if (result[blog.cats]) {
+          result[blog.cats].push(blog)
         } else {
-          results = [...results, { [blog.cats]: [blog] }]
+          result.push({ [blog.cats]: [blog] })
         }
       }
-      return results;
+
     } catch (error) {
       console.error(error);
       return { code: -1, message: "Error occurred" };
