@@ -27,13 +27,18 @@ export class BlogController {
     return await this.blogService.getEntireBlogs();
   }
 
-  @Get('/suggestions')
+  @Get("/suggestions")
   async getSuggestions(@Query() query) {
     return await this.blogService.getSuggestedBlogs(query.limit, query.category);
   }
 
-  @Get('/recent')
+  @Get("/recent")
   async getRecent(@Query() query) {
     return await this.blogService.getRecentBlogs(query.limit);
+  }
+
+  @Get("/all-blogs")
+  async getAllBlogsWithCategory(@Res() res: Response) {
+    return await this.blogService.getAllBlogsWithCategory(res.locals.userId);
   }
 }

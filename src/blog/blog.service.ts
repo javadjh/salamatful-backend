@@ -4,12 +4,14 @@ import { Model } from "mongoose";
 import config from "src/config";
 import { UserDocument } from "src/user/user.schema";
 import { BlogDocument } from "./blog.schema";
+import { PurchaseDocument } from "../purchase/purchase.schema";
 
 @Injectable()
 export class BlogService {
   constructor(
     @InjectModel("Blog") private blogModel: Model<BlogDocument>,
-    @InjectModel("User") private userModel: Model<UserDocument>
+    @InjectModel("User") private userModel: Model<UserDocument>,
+    @InjectModel("Purchase") private purchaseModel: Model<PurchaseDocument>
   ) {
   }
 
@@ -86,6 +88,33 @@ export class BlogService {
     } catch (error) {
       console.error(error);
       return [];
+    }
+  }
+
+  async getAllBlogsWithCategory(userId: string): Promise<any> {
+    try {
+      let allBlogs = await this.blogModel.find({}, "_id slug courseId title author pDate img lock");
+      allBlogs = this.fixImagePaths(allBlogs);
+      let results = []
+      for (let blog of allBlogs) {
+        if (blog.lock) {
+          let purchased = userId && await this.purchaseModel.findOne({
+            userId,
+            courseId: blog.courseId,
+            to: { $gte: new Date() }
+          });
+          if (purchased) blog.lock = false;
+        }
+        if (results[blog.cats]) {
+          results[blog.cats].push(blog)
+        } else {
+          results = [...results, { [blog.cats]: [blog] }]
+        }
+      }
+      return results;
+    } catch (error) {
+      console.error(error);
+      return { code: -1, message: "Error occurred" };
     }
   }
 
