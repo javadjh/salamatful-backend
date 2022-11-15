@@ -94,9 +94,9 @@ export class BlogService {
   async getAllBlogsWithCategory(userId: string): Promise<any> {
     try {
       let result = []
-      let belogdon = await this.blogModel.find()
-      belogdon = this.fixImagePaths(belogdon)
-      for(let blog of belogdon) {
+      let allBlogs = await this.blogModel.find()
+      allBlogs = this.fixImagePaths(allBlogs)
+      for(let blog of allBlogs) {
         if (blog.lock && blog.courseId) {
           const userExists = await this.purchaseModel.findOne(
             {
