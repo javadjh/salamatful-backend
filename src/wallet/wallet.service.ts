@@ -52,18 +52,6 @@ export class WalletService {
         plan: wallet.planType
       };
     }
-<<<<<<< HEAD
-    async redeem(userId: string): Promise<{ status: string; }> {
-        const user = await this.userModel.findById(userId, 'name');
-        if (user) {
-            const wallet = await this.walletModel.findOne({ userId: userId })
-            if (wallet.expiry < new Date()) {
-                return { status: "Ok" }
-            }
-        }
-        return {status:"not ok"}
-    }    
-=======
     return {
       code: -1,
       message: "User Id is not defined"
@@ -74,6 +62,5 @@ export class WalletService {
     const user = await this.userModel.findById(userId, "name");
     return { status: "not ok" };
   }
->>>>>>> 44626180417b4c7ebbcc09024950df767b7b9d58
 
 }
