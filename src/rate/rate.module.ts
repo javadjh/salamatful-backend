@@ -9,7 +9,7 @@ import { RateSchema } from './rate.schema';
   providers: [RateService],
   imports: [
     MongooseModule.forFeature([
-      { name: 'Like', schema: RateSchema },
+      { name: 'Rate', schema: RateSchema },
     ])],
 })
 export class RateModule {}
