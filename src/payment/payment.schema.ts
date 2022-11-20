@@ -12,6 +12,8 @@ export class Payment {
   plan: string;
   @Prop({ type: Date })
   at: Date;
+  @Prop({ type: Date })
+  to: Date;
   @Prop()
   userId: string;
 }

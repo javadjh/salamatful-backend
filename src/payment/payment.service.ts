@@ -89,9 +89,8 @@ export class PaymentService {
       const { Authority, Status } = query;
       const dataExists = await this.userModel.findOne(
         { authority: Authority },
-        "_id authority amount priceId phone callbackURL"
+        "_id id authority amount priceId phone callbackURL"
       );
-      console.log(dataExists)
       if (dataExists) {
         const res = await axios.post(zarinpalRequestURL, {
           merchant_id: merchantId,
@@ -102,33 +101,22 @@ export class PaymentService {
           const plan = await this.priceModel.findOne({
             _id: dataExists.priceId
           });
-
           let days = plan.days;
           let type = plan.type;
           if (plan.extraDays) {
             days += plan.extraDays;
           }
-          console.log("type:\t" + type);
           const expiryDate = new Date();
           expiryDate.setDate(expiryDate.getDate() + days);
-          console.log("expiry date:\t" + expiryDate);
-          let wallet = await this.walletModel.findOne({ userId: dataExists._id });
-          console.log("Wallet:");
-          console.log(wallet);
-          if (type === "Investment" && wallet) {
-            wallet.cash += parseInt(dataExists.amount);
-            wallet.planType = days.toString();
-            wallet.expiry = expiryDate;
-            console.log("New Wallet:");
-            console.log(wallet);
-            await this.walletModel.updateOne({ id: wallet.id }, {
-              cash: wallet.cash,
-              planType: wallet.planType,
-              expiry: wallet.expiry
+          let wallet = await this.walletModel.findOne({ userId: dataExists.id });
+          if (wallet) {
+            let walletCash = wallet.cash + parseInt(dataExists.amount);
+            await this.walletModel.updateOne({ userId: dataExists.id }, {
+              cash: walletCash,
+              planType: days.toString(),
+              expiry: expiryDate
             });
           }
-          console.log("Courses:");
-          console.log(plan.courses);
           for (let courseId of plan.courses) {
             const course = await this.courseModel.findById(courseId);
             if (course) {
@@ -141,10 +129,13 @@ export class PaymentService {
             { _id: dataExists._id, authority: Authority },
             { sub: expiryDate, authority: `${Authority}-expired` }
           );
+          const date = new Date();
+          date.setDate(date.getDate() + days);
           await this.paymentModel.create({
             amount: dataExists.amount,
             type: type,
             at: new Date(),
+            to: date,
             userId: dataExists._id,
             plan: plan._id
           });
