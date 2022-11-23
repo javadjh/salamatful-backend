@@ -32,7 +32,7 @@ export class WalletService {
     if (user) {
       const wallet = await this.walletModel.findOne({ userId });
       if (!wallet) return { code: -1, message: "Wallet does not exist" };
-      const available = await this.paymentModel.find({$and:[{to:{$lt:new Date}},{userId: userId},{valid: true}]})
+      const available = await this.paymentModel.find({ $and: [{ to: { $lt: new Date } }, { userId: userId }, { valid: true }] })
       let total: number = 0
       for (let payment of available) {
         total += payment.amount
@@ -66,8 +66,22 @@ export class WalletService {
     };
   }
 
-  async redeem(userId: string): Promise<{ status: string; }> {
+  async redeem(userId: string, body) {
     const user = await this.userModel.findById(userId, "name");
+    if (user && body.paymentId) {
+      const dataExists = await this.paymentModel.findOne({ $and: [{ userId: userId }, { id: body.paymentId }, { valid: true }] })
+      if (dataExists) {
+        return {
+          code: 1,
+          message: 'successful'
+        }
+      }
+return{
+  code: -1,
+  message: 'invalid Data'
+}
+    }
+
     return { status: "not ok" };
   }
 
