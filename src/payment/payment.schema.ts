@@ -16,6 +16,8 @@ export class Payment {
   to: Date;
   @Prop({default: true})
   valid: boolean;
+  @Prop({ default: false })
+  requested: boolean;
   @Prop()
   userId: string;
 }
