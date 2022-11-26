@@ -91,31 +91,26 @@ export class BlogService {
     }
   }
 
-  async getAllBlogsWithCategory(userId: string): Promise<any> {
+  async getAllBlogsWithCategory(userId: string) {
     try {
-      let result = []
-      let allBlogs = await this.blogModel.find()
-      allBlogs = this.fixImagePaths(allBlogs)
-      for(let blog of allBlogs) {
+      let result = [];
+      let allBlogs = await this.blogModel.find({}, "id slug courseId title lock cats img meta");
+      let purchasedCourses = await this.purchaseModel.find({ userId: userId, to: { $lte: new Date() } }, "courseId");
+      allBlogs = this.fixImagePaths(allBlogs);
+      for (let blog of allBlogs) {
         if (blog.lock && blog.courseId) {
-          const userExists = await this.purchaseModel.findOne(
-            {
-              userId: userId,
-              to: { $gte: new Date() },
-              courseId: blog.courseId,
-            }
-          )
-          if (userExists) {
+          if (purchasedCourses.map(purchase => purchase.courseId).indexOf(blog.courseId) >= 0) {
             blog.lock = false;
           }
         }
-        if (result[blog.cats]) {
-          result[blog.cats].push(blog)
+        const index = result.map(res => res.category).indexOf(blog.cats);
+        if (index >= 0) {
+          result[index].blogs.push(blog);
         } else {
-          result.push({ [blog.cats]: [blog] })
+          result.push({ category: blog.cats, blogs: [blog] });
         }
       }
-
+      return result;
     } catch (error) {
       console.error(error);
       return { code: -1, message: "Error occurred" };
