@@ -8,7 +8,7 @@ import { WebBlogSchema } from "./webblog.schema";
   controllers: [WebblogController],
   providers: [WebblogService],
   imports: [MongooseModule.forFeature([
-    { name: "Blog", schema: WebBlogSchema }
+    { name: "Webblog", schema: WebBlogSchema }
   ])]
 })
 export class WebblogModule {
