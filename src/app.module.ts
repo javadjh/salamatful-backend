@@ -30,6 +30,7 @@ import { WalletModule } from './wallet/wallet.module';
 import { SocialModule } from './social/social.module';
 import { LikeModule } from './like/like.module';
 import { RateModule } from './rate/rate.module';
+import { WebblogModule } from './webblog/webblog.module';
 
 @Module({
   imports: [
@@ -61,6 +62,7 @@ import { RateModule } from './rate/rate.module';
     SocialModule,
     LikeModule,
     RateModule,
+    WebblogModule,
   ],
   controllers: [AppController],
   providers: [AppService],
