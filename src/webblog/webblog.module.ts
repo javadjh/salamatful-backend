@@ -1,12 +1,12 @@
 import { Module } from "@nestjs/common";
-import { WebblogService } from "./webblog.service";
+import { WebBlogService } from "./webblog.service";
 import { WebblogController } from "./webblog.controller";
 import { MongooseModule } from "@nestjs/mongoose";
 import { WebBlogSchema } from "./webblog.schema";
 
 @Module({
   controllers: [WebblogController],
-  providers: [WebblogService],
+  providers: [WebBlogService],
   imports: [MongooseModule.forFeature([
     { name: "WebBlog", schema: WebBlogSchema }
   ])]
