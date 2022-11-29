@@ -1,11 +1,13 @@
-import { Controller, Get, Param, Query } from '@nestjs/common';
-import { WebBlogService } from './webblog.service'
+import { Controller, Get, Param, Query } from "@nestjs/common";
+import { WebBlogService } from "./webblog.service";
+
 @Controller('webblog')
 export class WebblogController {
-  constructor(private readonly webblogService: WebBlogService) { }
+  constructor(private readonly webblogService: WebBlogService) {}
 
-  @Get("/webblog/:slug")
-  async getWebblog(@Param() params,): Promise<any> {
+
+  @Get("/blog/:slug")
+  async getBlog(@Param() params): Promise<any> {
     return await this.webblogService.findBySlug(params);
   }
 
