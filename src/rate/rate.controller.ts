@@ -1,7 +1,14 @@
-import { Controller } from '@nestjs/common';
-import { RateService } from './rate.service';
+import { Body, Controller, Post, Res } from "@nestjs/common";
+import { RateService } from "./rate.service";
+import { Response } from "express";
 
-@Controller('rate')
+@Controller("rate")
 export class RateController {
-  constructor(private readonly rateService: RateService) {}
+  constructor(private readonly rateService: RateService) {
+  }
+
+  @Post("/")
+  async rate(@Res() res: Response, @Body() body) {
+    return await this.rateService.rateObject(res.locals.userId, body);
+  }
 }
