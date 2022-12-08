@@ -15,21 +15,27 @@ export class BackgroundsService {
     try {
       const { type, time } = body;
       if (type && time) {
-        const bgs = await this.backgroundModel.find({ $and: [{ types: { $in: type } }, { times: { $in: time } }, { url: { $ne: "" } }] }, "file url wide");
-        const index = Math.floor(Math.random() * bgs.length);
-        const bg = bgs[index];
-        let result = { file: { path: "" } };
-        if (bg && bg.url) {
-          result.file.path = bg.url;
-        } else if (bg && bg.file) {
-          result.file.path = `${config.serverURL}${config.backgrounds}/${bg.file.path}`;
+        const count_of_backgrounds = await this.backgroundModel.find().count();
+        const random = Math.floor(Math.random() * count_of_backgrounds);
+        let bg = await this.backgroundModel.find({
+          types: type,
+          times: time
+        }, "url file wide").skip(random).limit(1);
+        // @ts-ignore
+        bg = bg[0]
+        if (bg["url"]) {
+          return bg;
+        } else if (bg["file"]) {
+          bg["file"].path = `${config.serverURL}${config.backgrounds}/${bg["file"].path}`;
+          return bg;
+        } else {
+          return { code: 0, message: 'No background found' }
         }
-        return result;
       } else {
         return { code: 0, message: "Some of the parameters have been missed (type or time)" };
       }
     } catch (error) {
-      console.error(error)
+      console.error(error);
       return { code: -1, message: "Error occurred while getting a random background" };
     }
   }
