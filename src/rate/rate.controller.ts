@@ -9,6 +9,6 @@ export class RateController {
 
   @Post("/")
   async rate(@Res() res: Response, @Body() body) {
-    return await this.rateService.rateObject(res.locals.userId, body);
+    res.json(await this.rateService.rateObject(res.locals.userId, body));
   }
 }
