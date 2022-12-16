@@ -30,11 +30,11 @@ export class Blog {
   lock: boolean;
   @Prop()
   cDate: Date;
-  @Prop()
+  @Prop({ default: 0 })
   avgRate: number;
-  @Prop()
+  @Prop({ default: 0 })
   sumRates: number;
-  @Prop()
+  @Prop({ default: 0 })
   countRates: number;
 }
 

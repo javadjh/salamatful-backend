@@ -15,11 +15,11 @@ export class Audio {
         path: string,
         mime: string
     };
-    @Prop()
+    @Prop({ default: 0 })
     avgRate: number;
-    @Prop()
+    @Prop({ default: 0 })
     sumRates: number;
-    @Prop()
+    @Prop({ default: 0 })
     countRates: number;
     @Prop()
     url: string;

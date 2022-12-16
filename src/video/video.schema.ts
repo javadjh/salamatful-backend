@@ -35,11 +35,11 @@ export class Video {
     except: boolean;
     @Prop({ default: Date.now })
     cDate: Date;
-    @Prop()
+    @Prop({ default: 0 })
     avgRate: number;
-    @Prop()
+    @Prop({ default: 0 })
     sumRates: number;
-    @Prop()
+    @Prop({ default: 0 })
     countRates: number;
 }
 export const VideoSchema = SchemaFactory.createForClass(Video);

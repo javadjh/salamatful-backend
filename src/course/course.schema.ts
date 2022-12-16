@@ -47,11 +47,11 @@ export class Course {
   likes: number;
   @Prop({ default: new Date() })
   cDate: Date;
-  @Prop()
+  @Prop({ default: 0 })
   avgRate: number;
-  @Prop()
+  @Prop({ default: 0 })
   sumRates: number;
-  @Prop()
+  @Prop({ default: 0 })
   countRates: number;
 }
 
