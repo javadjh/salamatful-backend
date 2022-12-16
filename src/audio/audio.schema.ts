@@ -16,6 +16,12 @@ export class Audio {
         mime: string
     };
     @Prop()
+    avgRate: number;
+    @Prop()
+    sumRates: number;
+    @Prop()
+    countRates: number;
+    @Prop()
     url: string;
     @Prop()
     openInNewTab: Boolean;
