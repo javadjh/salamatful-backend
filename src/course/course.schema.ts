@@ -47,6 +47,12 @@ export class Course {
   likes: number;
   @Prop({ default: new Date() })
   cDate: Date;
+  @Prop()
+  avgRate: number;
+  @Prop()
+  sumRates: number;
+  @Prop()
+  countRates: number;
 }
 
 export const CourseSchema = SchemaFactory.createForClass(Course);

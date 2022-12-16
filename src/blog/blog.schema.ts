@@ -30,6 +30,12 @@ export class Blog {
   lock: boolean;
   @Prop()
   cDate: Date;
+  @Prop()
+  avgRate: number;
+  @Prop()
+  sumRates: number;
+  @Prop()
+  countRates: number;
 }
 
 export type BlogDocument = Blog & Document;
