@@ -1,0 +1,27 @@
+name: Salamatful-API:CI
+
+on:
+  push:
+    branches: ['main']
+
+jobs:
+  build:
+    name: 'Build Image'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Connect to the Server and Deploy the Project
+        uses: appleboy/ssh-action@v0.1.6
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          password: ${{ secrets.PASSWORD }}
+          script: |
+            docker login ghcr.io -u $GITHUB_USERNAME -p $GITHUB_TOKEN
+            docker pull ghcr.io/badie-tahghighi/api.salamatful.ir/Dockerfile:latest
+            docker stop api
+            docker system prune -f
+            docker run --name api -dit -p 3000:3000 ghcr.io/badie-tahghighi/api.salamatful.ir/Dockerfile:latest
