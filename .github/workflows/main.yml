@@ -2,11 +2,11 @@ name: Salamatful-API:CI
 
 on:
   push:
-    branches: ['main']
+    branches: ["main"]
 
 jobs:
   build:
-    name: 'Build Image'
+    name: "Build Image"
     runs-on: ubuntu-latest
 
     steps:
@@ -20,8 +20,7 @@ jobs:
           username: ${{ secrets.USERNAME }}
           password: ${{ secrets.PASSWORD }}
           script: |
-            docker login ghcr.io -u $GITHUB_USERNAME -p $GITHUB_TOKEN
-            docker pull ghcr.io/badie-tahghighi/api.salamatful.ir/Dockerfile:latest
+            cd /var/www/salamatful.com/api
             docker stop api
             docker system prune -f
             docker run --name api -dit -p 3000:3000 ghcr.io/badie-tahghighi/api.salamatful.ir/Dockerfile:latest
