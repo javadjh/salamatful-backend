@@ -1,48 +1,26 @@
-###################
-# BUILD FOR LOCAL DEVELOPMENT
-###################
+FROM node:19 as builder
 
-FROM node:18 As development
+ENV NODE_ENV build
 
-WORKDIR /usr/src/app
+WORKDIR /home/node
 
-COPY --chown=node:node package*.json ./
+COPY . /home/node
 
-RUN npm ci
+RUN npm ci \
+    && npm run build \
+    && npm prune --production
 
-COPY --chown=node:node . .
+# ---
 
-USER node
-
-###################
-# BUILD FOR PRODUCTION
-###################
-
-FROM node:18 As build
-
-WORKDIR /usr/src/app
-
-COPY --chown=node:node package*.json ./
-
-COPY --chown=node:node --from=development /usr/src/app/node_modules ./node_modules
-
-COPY --chown=node:node . .
-
-RUN npm run build
+FROM node:19
 
 ENV NODE_ENV production
 
-RUN npm ci --only=production && npm cache clean --force
-
 USER node
+WORKDIR /home/node
 
-###################
-# PRODUCTION
-###################
+COPY --from=builder /home/node/package*.json /home/node/
+COPY --from=builder /home/node/node_modules/ /home/node/node_modules/
+COPY --from=builder /home/node/dist/ /home/node/dist/
 
-FROM node:18 As production
-
-COPY --chown=node:node --from=build /usr/src/app/node_modules ./node_modules
-COPY --chown=node:node --from=build /usr/src/app/dist ./dist
-
-CMD [ "node", "dist/main.js" ]
+CMD ["node", "dist/main.js"]

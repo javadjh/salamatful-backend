@@ -21,7 +21,7 @@ jobs:
           password: ${{ secrets.PASSWORD }}
           script: |
             cd /var/www/salamatful.com/api
-            docker stop api_prod
-            docker system prune -f
-            docker-compose up -d prod
-            docker run --name api -dit -p 3000:3000 ghcr.io/badie-tahghighi/api.salamatful.ir/Dockerfile:latest
+            # docker stop api_prod
+            # docker system prune -f
+            # docker-compose up -d prod
+            # docker run --name api -dit -p 3000:3000 ghcr.io/badie-tahghighi/api.salamatful.ir/Dockerfile:latest
