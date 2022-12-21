@@ -36,6 +36,7 @@ jobs:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}
           password: ${{ secrets.PASSWORD }}
+          port: ${{ secrets.PORT }}
           script: |
             docker login -u gustavbadie -p "#Cykarush2"
             docker pull gustavbadie/api.salamatful.ir:main
