@@ -7,7 +7,7 @@ WORKDIR /home/node
 COPY . /home/node
 
 RUN npm ci -d \
-    && npm i -g nest \
+    && npm i -g @nestjs/cli \
     && npm run build \
     && npm prune --production
 
