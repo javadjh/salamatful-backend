@@ -7,6 +7,7 @@ WORKDIR /home/node
 COPY . /home/node
 
 RUN npm ci -d \
+    && npm i -g nest \
     && npm run build \
     && npm prune --production
 
