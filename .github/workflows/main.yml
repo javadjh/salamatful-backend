@@ -23,8 +23,6 @@ jobs:
         with:
           context: .
           push: true
-          tags: api
-          labels: api
       - name: "Connect to the Server and Deploy the Project"
         uses: appleboy/ssh-action@v0.1.6
         with:
