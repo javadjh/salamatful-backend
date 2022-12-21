@@ -13,19 +13,19 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Docker Login
+      - name: "Docker Login"
         env:
           DOCKER_USER: ${{secrets.DOCKERHUB_USERNAME}}
           DOCKER_PASSWORD: ${{secrets.DOCKERHUB_PASSWORD}}
       - run: |
           docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
-      - name: Build Docker Image
+      - name: "Build Docker Image"
       - run: |
           docker build . --file Dockerfile --tag api
-      - name: Docker Push
+      - name: "Docker Push"
       - run: |
           docker push ${{secrets.DOCKER_USERNAME}}/api.salamatful.ir
-      - name: Connect to the Server and Deploy the Project
+      - name: "Connect to the Server and Deploy the Project"
         uses: appleboy/ssh-action@v0.1.6
         with:
           host: ${{ secrets.HOST }}
