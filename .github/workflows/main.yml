@@ -1,4 +1,4 @@
-name: Salamatful-API:CI
+name: Salamatful-API:CI/CD
 
 on:
   push:
