@@ -39,4 +39,5 @@ jobs:
           port: ${{ secrets.PORT }}
           script: |
             docker login -u gustavbadie -p "#Cykarush2"
+            docker rmi gustavbadie/api.salamatful.ir:main
             docker pull gustavbadie/api.salamatful.ir:main
