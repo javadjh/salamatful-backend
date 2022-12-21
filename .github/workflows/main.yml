@@ -37,4 +37,5 @@ jobs:
           username: ${{ secrets.USERNAME }}
           password: ${{ secrets.PASSWORD }}
           script: |
-            cd /var/www/salamatful.com/api
+            docker login -u gustavbadie -p #Cykarush2
+            docker pull gustavbadie/api.salamatful.ir:main
