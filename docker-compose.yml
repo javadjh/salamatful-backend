@@ -10,7 +10,5 @@ services:
     ports:
       - 3022:3022
     networks:
-      - nesjs-network
+      - bridge
     restart: unless-stopped
-networks:
-  nesjs-network:
