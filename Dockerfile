@@ -8,7 +8,6 @@ COPY . /home/node
 
 RUN npm ci -d \
     && npm i -g @nestjs/cli \
-    && npm install pm2 -g \
     && npm run build \
     && npm prune --production
 
@@ -25,4 +24,4 @@ COPY --from=builder /home/node/package*.json /home/node/
 COPY --from=builder /home/node/node_modules/ /home/node/node_modules/
 COPY --from=builder /home/node/dist/ /home/node/dist/
 
-CMD ["pm2", "start --name api"]
+CMD ["npm", "run", "start:prod"]

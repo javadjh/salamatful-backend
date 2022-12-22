@@ -40,7 +40,6 @@ jobs:
           script: |
             docker login -u gustavbadie -p "#Cykarush2"
             docker container rm -f api
-            pm2 delete api
             docker rmi gustavbadie/api.salamatful.ir:main
             docker pull gustavbadie/api.salamatful.ir:main
-            docker run --network=host --name=api gustavbadie/api.salamatful.ir:main
+            docker run --network=host --name=api -d gustavbadie/api.salamatful.ir:main
