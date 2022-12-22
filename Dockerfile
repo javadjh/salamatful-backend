@@ -8,6 +8,7 @@ COPY . /home/node
 
 RUN npm ci -d \
     && npm i -g @nestjs/cli \
+    && npm install pm2 -g \
     && npm run build \
     && npm prune --production
 
