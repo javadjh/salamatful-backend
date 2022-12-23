@@ -1,52 +1,54 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
-import { Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import axios from 'axios';
-import { Model } from 'mongoose';
-import { CourseDocument } from 'src/course/course.schema';
-import { TokensDocument } from 'src/token/token.schema';
-import { TempUserDocument } from './tempUser.schema';
-import { TokenBase, TokenGenerator } from 'ts-token-generator';
-import { UserDocument } from './user.schema';
-import config from 'src/config';
-import { isDev, isProduction, normalizePhoneNumber } from '../util';
-import kavenegar from '../lib/kavenegar';
-import parsePhoneNumber from 'libphonenumber-js';
-import { existsSync, unlinkSync, writeFileSync } from 'fs';
-import { join } from 'path';
-import * as mime from 'mime';
-import * as sharp from 'sharp';
-import * as uuid from 'uuid';
-import { ProgressDocument } from 'src/progress/progress.schema';
-import { AudioDocument } from 'src/audio/audio.schema';
-import { VideoDocument } from 'src/video/video.schema';
+import { Injectable } from "@nestjs/common";
+import { InjectModel } from "@nestjs/mongoose";
+import axios from "axios";
+import { Model } from "mongoose";
+import { CourseDocument } from "src/course/course.schema";
+import { TokensDocument } from "src/token/token.schema";
+import { TempUserDocument } from "./tempUser.schema";
+import { TokenBase, TokenGenerator } from "ts-token-generator";
+import { UserDocument } from "./user.schema";
+import config from "src/config";
+import { isDev, isProduction, normalizePhoneNumber } from "../util";
+import kavenegar from "../lib/kavenegar";
+import parsePhoneNumber from "libphonenumber-js";
+import { existsSync, unlinkSync, writeFileSync } from "fs";
+import { join } from "path";
+import * as mime from "mime";
+import * as sharp from "sharp";
+import * as uuid from "uuid";
+import { ProgressDocument } from "src/progress/progress.schema";
+import { AudioDocument } from "src/audio/audio.schema";
+import { VideoDocument } from "src/video/video.schema";
 import { WalletDocument } from "../wallet/wallet.schema";
 
-export const farazSmsURL = 'https://ippanel.com/api/select';
-export const smsUsername = '09396057575';
-export const smsPassword = '0014966786';
-export const smsLine = '+983000505';
-export const verificationCodePatternId = 'puqq3wa58w';
+export const farazSmsURL = "https://ippanel.com/api/select";
+export const smsUsername = "09396057575";
+export const smsPassword = "0014966786";
+export const smsLine = "+983000505";
+export const verificationCodePatternId = "puqq3wa58w";
 export const tokenGenerator = new TokenGenerator({
   bitSize: 512,
   baseEncoding: TokenBase.BASE62,
 });
-const bcrypt = require('bcrypt');
+const bcrypt = require("bcrypt");
 const salt = bcrypt.genSaltSync(10);
-const finalPath = isProduction() ? '//var/www/admin.salamatful.ir/source/public' : 'public';
+const finalPath = isProduction()
+  ? "//var/www/admin.salamatful.com/source/public"
+  : "public";
 
 @Injectable()
 export class UserService {
   constructor(
-    @InjectModel('User') private UserModel: Model<UserDocument>,
-    @InjectModel('Token') private tokenModel: Model<TokensDocument>,
-    @InjectModel('Course') private courseModel: Model<CourseDocument>,
-    @InjectModel('TempUser') private tempUserModel: Model<TempUserDocument>,
-    @InjectModel('Progress') private progressModel: Model<ProgressDocument>,
-    @InjectModel('Audio') private audioModel: Model<AudioDocument>,
-    @InjectModel('Video') private videoModel: Model<VideoDocument>,
-    @InjectModel('Wallet') private walletModel: Model<WalletDocument>,
-  ) { }
+    @InjectModel("User") private UserModel: Model<UserDocument>,
+    @InjectModel("Token") private tokenModel: Model<TokensDocument>,
+    @InjectModel("Course") private courseModel: Model<CourseDocument>,
+    @InjectModel("TempUser") private tempUserModel: Model<TempUserDocument>,
+    @InjectModel("Progress") private progressModel: Model<ProgressDocument>,
+    @InjectModel("Audio") private audioModel: Model<AudioDocument>,
+    @InjectModel("Video") private videoModel: Model<VideoDocument>,
+    @InjectModel("Wallet") private walletModel: Model<WalletDocument>
+  ) {}
 
   async verifyPhone(body): Promise<any> {
     try {
@@ -59,7 +61,7 @@ export class UserService {
           validated: true,
         });
         if (userExists) {
-          return { code: 0, message: 'Sign in to your account' };
+          return { code: 0, message: "Sign in to your account" };
         } else {
           await this.tempUserModel.deleteMany({ phone: phone });
           await this.tempUserModel.create({
@@ -70,7 +72,7 @@ export class UserService {
         // send verification code
         return await this.sendVerificationSMS(phone, code);
       }
-      return { code: 0, message: 'Phone number missed' };
+      return { code: 0, message: "Phone number missed" };
     } catch (error) {
       return { code: -1, message: error };
     }
@@ -102,7 +104,7 @@ export class UserService {
       if (user) {
         await this.tempUserModel.updateOne(
           { _id: user._id },
-          { confirmed: true },
+          { confirmed: true }
         );
         const token = tokenGenerator.generate();
         await this.tokenModel.create({
@@ -112,14 +114,14 @@ export class UserService {
 
         return { code: 1, data: user, token };
       }
-      return { code: 0, message: 'Invalid code or phone number' };
+      return { code: 0, message: "Invalid code or phone number" };
     } catch (error) {
       return { code: -1, message: error };
     }
   }
   /**
-   * 
-   * @param body 
+   *
+   * @param body
    * @returns object
    */
   async createAccount(body): Promise<any> {
@@ -132,7 +134,7 @@ export class UserService {
       if (phone && tempUserExists) {
         const newUser = await this.UserModel.create({
           name: name,
-          role: 'user',
+          role: "user",
           pass: `${this.hashPassword(pass)}`,
           phone: tempUserExists.phone,
           validated: true,
@@ -141,7 +143,7 @@ export class UserService {
         await this.tempUserModel.deleteMany({ phone: phone });
         const user = await this.UserModel.findOne(
           { phone: phone },
-          '_id name phone validated',
+          "_id name phone validated"
         );
         const newToken = tokenGenerator.generate();
         await this.tokenModel.create({
@@ -152,12 +154,12 @@ export class UserService {
           code: 1,
           data: await this.UserModel.findOne(
             { phone: phone, validated: true },
-            '_id name',
+            "_id name"
           ),
           token: newToken,
         };
       }
-      return { code: 0, message: 'Incorrect Data' };
+      return { code: 0, message: "Incorrect Data" };
     } catch (error) {
       return { code: -1, message: error };
     }
@@ -170,7 +172,7 @@ export class UserService {
       if (phone && pass) {
         const user = await this.UserModel.findOne(
           { phone: phone, validated: true },
-          '_id name year phone sub progress validated pass',
+          "_id name year phone sub progress validated pass"
         );
         if (user) {
           if (this.verifyPassword(pass, user.pass)) {
@@ -197,16 +199,16 @@ export class UserService {
               token,
             };
           } else {
-            return { code: -1, message: 'Wrong Password' };
+            return { code: -1, message: "Wrong Password" };
           }
         } else {
-          return { code: -1, message: 'No match found' };
+          return { code: -1, message: "No match found" };
         }
       } else {
-        return { code: -1, message: 'Some parameters have been missed.' };
+        return { code: -1, message: "Some parameters have been missed." };
       }
     } catch (error) {
-      return { code: -1, message: 'An Error Occurred' };
+      return { code: -1, message: "An Error Occurred" };
     }
   }
 
@@ -216,14 +218,20 @@ export class UserService {
       if (user) {
         if (bg) {
           if (user.bg && user.bg.path) {
-            await this.delete([user.bg.path], 'profiles');
+            await this.delete([user.bg.path], "profiles");
           }
-          const files = await this.save([bg], 'profiles');
-          await this.UserModel.updateOne({ _id: user._id }, { bg: files[0], bgURL: `${config.serverURL}${config.profiles}/${files[0].path}` });
+          const files = await this.save([bg], "profiles");
+          await this.UserModel.updateOne(
+            { _id: user._id },
+            {
+              bg: files[0],
+              bgURL: `${config.serverURL}${config.profiles}/${files[0].path}`,
+            }
+          );
         }
         const profile = await this.UserModel.findById(
           user.id,
-          '_id name year phone sub progress validated cDate uDate bg',
+          "_id name year phone sub progress validated cDate uDate bg"
         );
         profile.bg.path = `${config.serverURL}${config.profiles}/${profile.bg.path}`;
         return {
@@ -231,7 +239,7 @@ export class UserService {
           user: profile,
         };
       }
-      return { code: 0, message: 'No match found' };
+      return { code: 0, message: "No match found" };
     } catch (error) {
       return { code: -1, message: error };
     }
@@ -245,7 +253,7 @@ export class UserService {
         await this.UserModel.updateOne({ _id: user._id }, { name });
         const profile = await this.UserModel.findById(
           user.id,
-          '_id name year phone sub progress validated cDate uDate bg',
+          "_id name year phone sub progress validated cDate uDate bg"
         );
         profile.bg.path = `${config.serverURL}${config.profiles}/${profile.bg.path}`;
         return {
@@ -253,57 +261,69 @@ export class UserService {
           user: profile,
         };
       }
-      return { code: 0, message: 'Some of the parameters have been missed' }
+      return { code: 0, message: "Some of the parameters have been missed" };
     } catch (error) {
-      return { code: -1, message: 'An error occurred' };
+      return { code: -1, message: "An error occurred" };
     }
   }
 
   async getUser(userId): Promise<any> {
     try {
       const user =
-        userId && (await this.UserModel.findById(userId, '_id progress'));
+        userId && (await this.UserModel.findById(userId, "_id progress"));
       if (user) {
         await this.UserModel.updateOne(
           { _id: user._id },
           {
             $inc: {
-              'progress.days':
+              "progress.days":
                 user.progress.last &&
-                  new Date().getDay() - user.progress.last.getDay() != 0
+                new Date().getDay() - user.progress.last.getDay() != 0
                   ? 1
                   : 0,
             },
-            $set: { 'progress.last': new Date() },
-          },
+            $set: { "progress.last": new Date() },
+          }
         );
-        const audios = await this.progressModel.find({ uId: userId, t: 'audio' }, 'oId');
-        const videos = await this.progressModel.find({ uId: userId, t: 'video' }, 'oId');
+        const audios = await this.progressModel.find(
+          { uId: userId, t: "audio" },
+          "oId"
+        );
+        const videos = await this.progressModel.find(
+          { uId: userId, t: "video" },
+          "oId"
+        );
         let minsOfAudio = 0;
         let minsOfVideo = 0;
         let minsOfMeditaion = 0;
         let minsOfPractice = 0;
         audios.map(async (audio) => {
-          const document = await this.audioModel.findById(audio.oId, 'length type');
-          if (document.type === 'meditation') {
+          const document = await this.audioModel.findById(
+            audio.oId,
+            "length type"
+          );
+          if (document.type === "meditation") {
             minsOfMeditaion += document.length;
-          } else if (document.type === 'practice') {
+          } else if (document.type === "practice") {
             minsOfPractice += document.length;
           }
           minsOfAudio += document.length;
         });
         videos.map(async (video) => {
-          const document = await this.videoModel.findById(video.oId, 'length type');
-          if (document.type === 'meditation') {
+          const document = await this.videoModel.findById(
+            video.oId,
+            "length type"
+          );
+          if (document.type === "meditation") {
             minsOfMeditaion += document.length;
-          } else if (document.type === 'practice') {
+          } else if (document.type === "practice") {
             minsOfPractice += document.length;
           }
           minsOfVideo += document.length;
         });
         const u = await this.UserModel.findById(
           userId,
-          'name sub progress validated bg cDate uDate',
+          "name sub progress validated bg cDate uDate"
         );
         return {
           code: 1,
@@ -319,12 +339,12 @@ export class UserService {
             minsOfVideo,
             minsOfMeditaion,
             minsOfPractice,
-          }
-        }
+          },
+        };
       }
       return { code: 0, message: `Invalid user Id.` };
     } catch (error) {
-      return { code: -1, message: 'Error Occurred' };
+      return { code: -1, message: "Error Occurred" };
     }
   }
   /**
@@ -342,9 +362,9 @@ export class UserService {
         code,
       });
 
-      return { code: 1, message: 'Code sent successfully' };
+      return { code: 1, message: "Code sent successfully" };
     } catch (error) {
-      let message = '';
+      let message = "";
       if (error.response) {
         message = error.response.data.return.message;
       }
@@ -361,17 +381,17 @@ export class UserService {
   async _sendSMSDeprecated(data): Promise<any> {
     try {
       if (isDev()) {
-        return { code: 1, message: '' };
+        return { code: 1, message: "" };
       }
 
       const res = await axios.post(farazSmsURL, {
-        op: 'pattern',
+        op: "pattern",
         user: smsUsername,
         pass: smsPassword,
         fromNum: smsLine,
         toNum: data.phone,
         patternCode: verificationCodePatternId,
-        inputData: [{ 'verification-code': data.message }],
+        inputData: [{ "verification-code": data.message }],
       });
 
       return { code: 1, message: res.data };
@@ -384,9 +404,9 @@ export class UserService {
   async getFavoriteCourses(userId): Promise<any> {
     try {
       const result = [];
-      const user = await this.UserModel.findById(userId, 'fav');
+      const user = await this.UserModel.findById(userId, "fav");
       for (const fav of user.fav) {
-        const course = await this.courseModel.findById(fav.cId, 'bg slug');
+        const course = await this.courseModel.findById(fav.cId, "bg slug");
         result.push({
           cId: fav.cId,
           slug: course.slug,
@@ -396,21 +416,21 @@ export class UserService {
       }
       return result;
     } catch (error) {
-      return { code: -1, message: 'Invalid user Id.' };
+      return { code: -1, message: "Invalid user Id." };
     }
   }
 
   async getdefaultcourses(): Promise<any> {
     try {
     } catch (error) {
-      return { code: -1, message: 'Invalid user Id.' };
+      return { code: -1, message: "Invalid user Id." };
     }
   }
 
   // check account subscription
   async verifySubscription(userId): Promise<any> {
     try {
-      const user = await this.UserModel.findOne(userId, '_id sub');
+      const user = await this.UserModel.findOne(userId, "_id sub");
       let isVerified = false;
       if (user) {
         if (user.sub.getTime() >= new Date().getTime()) {
@@ -419,7 +439,7 @@ export class UserService {
       }
       return isVerified;
     } catch (error) {
-      return { code: -1, message: 'Error occurred.' };
+      return { code: -1, message: "Error occurred." };
     }
   }
 
@@ -442,11 +462,11 @@ export class UserService {
 
   async logout(userId) {
     try {
-      if (!userId) return { code: 0, msg: 'Invalid data.' };
-      const user = await this.UserModel.findById(userId, '_id phone');
-      if (!user) return { code: 0, msg: 'Invalid data.' };
+      if (!userId) return { code: 0, msg: "Invalid data." };
+      const user = await this.UserModel.findById(userId, "_id phone");
+      if (!user) return { code: 0, msg: "Invalid data." };
       await this.tokenModel.deleteMany({ userId });
-      return { code: 1, msg: 'Account logged out successfully.' };
+      return { code: 1, msg: "Account logged out successfully." };
     } catch (error) {
       return { code: -1, message: error };
     }
@@ -473,16 +493,20 @@ export class UserService {
     const phoneNumber = parsePhoneNumber(phone);
     if (phoneNumber && phoneNumber.isValid()) {
       return {
-        status: 'success',
-        message: 'شماره تلفن صحیح است.',
+        status: "success",
+        message: "شماره تلفن صحیح است.",
         normalizedNumber: phoneNumber.number,
       };
     }
-    return { status: 'error', message: 'شماره تلفن وارد شده صحیح نمی باشد.' };
+    return { status: "error", message: "شماره تلفن وارد شده صحیح نمی باشد." };
   }
 
   // file handler methods
-  async save(files: Array<any>, dest: string, otherOptions?: any): Promise<any> {
+  async save(
+    files: Array<any>,
+    dest: string,
+    otherOptions?: any
+  ): Promise<any> {
     if (!Array.isArray(files)) {
       files = [files];
     }
@@ -490,7 +514,8 @@ export class UserService {
     let output = [];
     for (let file of files) {
       const prefix = config[dest] || config["defaultImages"];
-      const subFolder = (otherOptions && otherOptions.subFolder) ? otherOptions.subFolder : "";
+      const subFolder =
+        otherOptions && otherOptions.subFolder ? otherOptions.subFolder : "";
       const filename = uuid.v1() + "." + file.originalname.split(".").pop();
       const pathToOutput = join(prefix, subFolder, filename);
       const pathToWrite = join(finalPath, pathToOutput);
@@ -501,7 +526,11 @@ export class UserService {
         mimetype: file.mimetype,
       });
 
-      output.push({ name: file.originalname, path: filename, mime: file.mimetype });
+      output.push({
+        name: file.originalname,
+        path: filename,
+        mime: file.mimetype,
+      });
     }
 
     return output;
@@ -516,7 +545,7 @@ export class UserService {
       if (!prefix) return false;
       for (let path of paths) {
         if (!path.startsWith("public")) path = join(finalPath, prefix, path);
-  
+
         if (existsSync(path)) {
           unlinkSync(path);
         }
@@ -527,18 +556,21 @@ export class UserService {
   }
 
   async compressAndSave({ input, fileOut, mimetype }): Promise<any> {
-    if (!config.imageCompression.enable || mime.extension(mimetype) === 'gif') {
+    if (!config.imageCompression.enable || mime.extension(mimetype) === "gif") {
       return new Promise((resolve, reject) => {
         writeFileSync(fileOut, fileOut, { mode: 0o777, flag: "wx" });
-        resolve('');
+        resolve("");
       });
     }
 
-    let compressed = await sharp(input)
-      .resize(config.imageCompression.maxWidth, config.imageCompression.maxHeight, {
+    let compressed = await sharp(input).resize(
+      config.imageCompression.maxWidth,
+      config.imageCompression.maxHeight,
+      {
         fit: sharp.fit.inside,
-        withoutEnlargement: true
-      });
+        withoutEnlargement: true,
+      }
+    );
 
     compressed = await this.compressByMimeType(compressed, {
       mimetype,
@@ -550,12 +582,12 @@ export class UserService {
 
   async compressByMimeType(sharp, { mimetype, quality }): Promise<any> {
     switch (mime.extension(mimetype)) {
-      case 'jpeg':
+      case "jpeg":
         if (config.imageCompression.useWebpForJPEG) {
           return await sharp.webp({ quality });
         }
         return await sharp.jpeg({ quality });
-      case 'png':
+      case "png":
         if (config.imageCompression.useWebpForPNG) {
           return await sharp.webp({ quality });
         }

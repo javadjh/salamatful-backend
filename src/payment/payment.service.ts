@@ -12,9 +12,11 @@ import { UserDocument } from "src/user/user.schema";
 import { WalletDocument } from "../wallet/wallet.schema";
 import { PaymentDocument } from "./payment.schema";
 
-export const zarinpalRequestURL = "https://api.zarinpal.com/pg/v4/payment/request.json";
-export const zarinpalVerifyURL = "https://api.zarinpal.com/pg/v4/payment/verify.json";
-export const callBackURL = "https://salamatful.ir";
+export const zarinpalRequestURL =
+  "https://api.zarinpal.com/pg/v4/payment/request.json";
+export const zarinpalVerifyURL =
+  "https://api.zarinpal.com/pg/v4/payment/verify.json";
+export const callBackURL = "https://salamatful.com";
 export const merchantId = "822b28f0-78ea-42a9-a76c-6249ccc4da7e";
 
 // export const merchantId = '822b28f0-asdd-dssd-a76c-6249ccc4da7e';
@@ -36,8 +38,7 @@ export class PaymentService {
     @InjectModel("Purchase") private purchaseModel: Model<PurchaseDocument>,
     @InjectModel("Wallet") private walletModel: Model<WalletDocument>,
     @InjectModel("Payment") private paymentModel: Model<PaymentDocument>
-  ) {
-  }
+  ) {}
 
   async getAuthorityCode(body, userId): Promise<any> {
     try {
@@ -53,7 +54,7 @@ export class PaymentService {
         );
         const discount = await this.discountModel.findOne({
           code: code,
-          priceId: priceId
+          priceId: priceId,
         });
         if (discount && discount.amount < 100) {
           price.amount = price.amount * ((100 - discount.amount) / 100);
@@ -62,7 +63,7 @@ export class PaymentService {
           merchant_id: merchantId,
           amount: price.amount,
           description: price.desc,
-          callback_url: "https://salamatful.ir/api/v1/payment/check"
+          callback_url: "https://salamatful.com/api/v1/payment/check",
         });
         res = res.data;
         if (res.data.code == 100) {
@@ -72,7 +73,7 @@ export class PaymentService {
               authority: res.data.authority,
               amount: `${price.amount}`,
               callbackURL: url,
-              priceId
+              priceId,
             }
           );
         }
@@ -84,7 +85,10 @@ export class PaymentService {
     }
   }
 
-  async checkTransaction(query: { Authority: string; Status: string }, response: Response): Promise<any> {
+  async checkTransaction(
+    query: { Authority: string; Status: string },
+    response: Response
+  ): Promise<any> {
     try {
       const { Authority, Status } = query;
       const dataExists = await this.userModel.findOne(
@@ -95,11 +99,11 @@ export class PaymentService {
         const res = await axios.post(zarinpalRequestURL, {
           merchant_id: merchantId,
           amount: dataExists.amount,
-          authority: dataExists.authority
+          authority: dataExists.authority,
         });
         if (Status === "OK") {
           const plan = await this.priceModel.findOne({
-            _id: dataExists.priceId
+            _id: dataExists.priceId,
           });
           let days = plan.days;
           let type = plan.type;
@@ -108,21 +112,31 @@ export class PaymentService {
           }
           const expiryDate = new Date();
           expiryDate.setDate(expiryDate.getDate() + days);
-          let wallet = await this.walletModel.findOne({ userId: dataExists.id });
+          let wallet = await this.walletModel.findOne({
+            userId: dataExists.id,
+          });
           if (wallet) {
             let walletCash = wallet.cash + parseInt(dataExists.amount);
-            await this.walletModel.updateOne({ userId: dataExists.id }, {
-              cash: walletCash,
-              planType: days.toString(),
-              expiry: expiryDate
-            });
+            await this.walletModel.updateOne(
+              { userId: dataExists.id },
+              {
+                cash: walletCash,
+                planType: days.toString(),
+                expiry: expiryDate,
+              }
+            );
           }
           for (let courseId of plan.courses) {
             const course = await this.courseModel.findById(courseId);
             if (course) {
               const date = new Date();
               date.setDate(date.getDate() + days);
-              await this.purchaseModel.create({ courseId, userId: dataExists._id, at: new Date(), to: date });
+              await this.purchaseModel.create({
+                courseId,
+                userId: dataExists._id,
+                at: new Date(),
+                to: date,
+              });
             }
           }
           await this.userModel.updateOne(
@@ -137,7 +151,7 @@ export class PaymentService {
             at: new Date(),
             to: date,
             userId: dataExists._id,
-            plan: plan._id
+            plan: plan._id,
           });
           // let coupon;
           // if (plan.couponGift)
@@ -167,12 +181,12 @@ export class PaymentService {
           // }
         }
       }
-      return response.redirect("https://salamatful.ir/wallet-page");
+      return response.redirect("https://salamatful.com/wallet-page");
     } catch (error) {
       console.error(error);
       return {
         code: -1,
-        message: "Error occurred while checking payment status."
+        message: "Error occurred while checking payment status.",
       };
     }
   }
