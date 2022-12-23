@@ -4,17 +4,20 @@ import { WalletService } from "./wallet.service";
 
 @Controller("wallet")
 export class WalletController {
-  constructor(private readonly walletService: WalletService) {
-  }
+  constructor(private readonly walletService: WalletService) {}
 
   @Post("/create")
   async createWallet(@Res() res: Response, @Body() body) {
-    return res.json(await this.walletService.createWallet(res.locals.userId, body));
+    return res.json(
+      await this.walletService.createWallet(res.locals.userId, body)
+    );
   }
 
-  @Put('/update')
+  @Put("/update")
   async updateWallet(@Res() res: Response, @Body() body) {
-    return res.json(await this.walletService.updateCardNumber(res.locals.userId, body));
+    return res.json(
+      await this.walletService.updateCardNumber(res.locals.userId, body)
+    );
   }
 
   @Get("/info")
@@ -22,13 +25,13 @@ export class WalletController {
     res.json(await this.walletService.getInfo(res.locals.userId));
   }
 
-  @Get("/plan")
-  async gotToPlan(@Res() res: Response) {
+  @Get("/plans")
+  async getPlans(@Res() res: Response) {
     res.json(await this.walletService.getPlan(res.locals.userId));
   }
 
   @Post("/redeem")
   async redeemCash(@Res() res: Response, @Body() body) {
-    return await this.walletService.redeem(res.locals.userId, body)
+    res.json(await this.walletService.redeem(res.locals.userId, body));
   }
 }
