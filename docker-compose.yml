@@ -2,13 +2,16 @@ version: "1"
 services:
   app:
     container_name: api
-    image: api:latest
+    image: gustavbadie/api.salamatful.ir:main
+    network_mode: "host"
     build:
       context: .
       dockerfile: ./Dockerfile
     command: npm run start:prod
     ports:
       - 3022:3022
-    networks:
-      - bridge
-    restart: unless-stopped
+    restart: always
+    volumes:
+      - "/var/www/salamatful.com/admin/public/audios:/home/node/public/audios"
+      - "/var/www/salamatful.com/admin/public/images:/home/node/public/images"
+      - "/var/www/salamatful.com/admin/public/videos:/home/node/public/videos"

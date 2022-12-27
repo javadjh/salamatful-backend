@@ -30,6 +30,15 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+      - name: copy file via ssh password
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          password: ${{ secrets.PASSWORD }}
+          port: ${{ secrets.PORT }}
+          source: "docker-compose.yml"
+          target: "/var/www/salamatful.com/api"
       - name: "Connect to the Server and Deploy the Project"
         uses: appleboy/ssh-action@v0.1.6
         with:
@@ -39,7 +48,8 @@ jobs:
           port: ${{ secrets.PORT }}
           script: |
             docker login -u gustavbadie -p "#Cykarush2"
-            docker container rm -f api
             docker rmi gustavbadie/api.salamatful.ir:main
             docker pull gustavbadie/api.salamatful.ir:main
-            docker run --network=host --name=api -d gustavbadie/api.salamatful.ir:main
+            cd /var/www/salamatful.com/api
+            docker-compose down
+            docker-compose up -d

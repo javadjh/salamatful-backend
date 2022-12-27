@@ -33,9 +33,7 @@ export const tokenGenerator = new TokenGenerator({
 });
 const bcrypt = require("bcrypt");
 const salt = bcrypt.genSaltSync(10);
-const finalPath = isProduction()
-  ? "//var/www/admin.salamatful.com/source/public"
-  : "public";
+const finalPath = "public";
 
 @Injectable()
 export class UserService {
