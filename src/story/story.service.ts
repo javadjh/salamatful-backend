@@ -9,7 +9,7 @@ import config from 'src/config';
 
 @Injectable()
 export class StoryService {
-    constructor(@InjectModel("Story") private storyModel: Model<StoryDocument>) { }
+    constructor(@InjectModel("Story") private storyModel: Model<StoryDocument>, @InjectModel("Category") private categoryModel: Model<StoryDocument>) { }
     async findAll(): Promise<any> {
         try {
             var stories = await this.storyModel.find({ client: true });
@@ -25,4 +25,28 @@ export class StoryService {
             return (error);
         }
     }
+    async getStoryByCategory(params) {
+        try {
+            const { id } = params;
+            const category = await this.categoryModel.findById(id);
+            if (category) {
+                const count_of_stories = await this.storyModel.find({ static: false }).count();
+                const random = Math.floor(Math.random() * count_of_stories);
+                let story = await this.storyModel.find({
+                    static: false
+                }, "url file desc").skip(random).limit(1);
+                // @ts-ignore
+                story = story[0]
+                if (story['url']) {
+                    return story;
+                }
+                story['url'] = `${config.serverURL}${config.storyFiles}/${story["file"].path}`;
+                return story;
+            }
+        } catch (error) {
+
+        }
+
+    }
+
 }

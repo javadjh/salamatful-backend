@@ -8,4 +8,8 @@ export class StoryController {
   async findAll(): Promise<any> {
     return await this.storyService.findAll();
   }
+  @Get('/category/:id/random')
+  async getStoryBycategory(@Param() params) {
+    return await this.storyService.getStoryByCategory(params);
+  }
 }
