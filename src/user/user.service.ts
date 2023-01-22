@@ -362,6 +362,7 @@ export class UserService {
 
       return { code: 1, message: "Code sent successfully" };
     } catch (error) {
+      console.log(error);
       let message = "";
       if (error.response) {
         message = error.response.data.return.message;
