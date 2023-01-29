@@ -19,6 +19,8 @@ export class Video {
         path: string,
         mime: string
     };
+    @Prop({ type: Array, default: [] })
+    tags: Array<string>;
     @Prop()
     seen: boolean;
     @Prop()

@@ -11,7 +11,7 @@ export class Category {
   @Prop({ type: Array })
   course: Array<any>;
   @Prop({ type: Array })
-  carousel: [{ index: number; title: string; courses: Array<string>; showWide: boolean; }];
+  carousel: [{ index: number; title: string; courses: Array<string>; showWide: boolean; mode: boolean; }];
   @Prop({ default: false })
   client: Boolean;
   @Prop({ type: Object })

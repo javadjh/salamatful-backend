@@ -33,6 +33,8 @@ export class Audio {
     type: string;
     @Prop()
     except: boolean;
+    @Prop({ type: Array, default: [] })
+    tags: Array<string>;
     @Prop()
     seen: boolean;
     @Prop({ default: Date.now })

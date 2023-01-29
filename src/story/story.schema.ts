@@ -19,6 +19,8 @@ export class Story {
     @Prop({ default: new Date() })
     cDate: Date;
     @Prop()
+    category: String;
+    @Prop()
     static: Boolean;
 }
 export const StorySchema = SchemaFactory.createForClass(Story);
