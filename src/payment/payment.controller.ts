@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Query, Res } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Query, Res } from '@nestjs/common';
 import { query, Response } from 'express';
 import { PaymentService } from './payment.service';
 
@@ -17,5 +17,10 @@ export class PaymentController {
     res.json(
       await this.paymentService.checkTransaction(query, res),
     );
+  }
+
+  @Get('/receipt/:id')
+  async getReceipt(@Param() params) {
+    return await this.paymentService.getReceipt(params.id);
   }
 }

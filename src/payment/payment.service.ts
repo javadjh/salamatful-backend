@@ -53,7 +53,7 @@ export class PaymentService {
           "amount desc extraDays couponGift"
         );
         const discount = await this.discountModel.findOne({
-          code: code,
+          code: code.toLowerCase(),
           priceId: priceId,
         });
         if (discount && discount.amount < 100) {
@@ -90,12 +90,14 @@ export class PaymentService {
     response: Response
   ): Promise<any> {
     try {
+      let expiryDate, days, type, gift, amount, id;
       const { Authority, Status } = query;
       const dataExists = await this.userModel.findOne(
         { authority: Authority },
         "_id id authority amount priceId phone callbackURL"
       );
       if (dataExists) {
+        amount = dataExists.amount;
         const res = await axios.post(zarinpalRequestURL, {
           merchant_id: merchantId,
           amount: dataExists.amount,
@@ -105,12 +107,13 @@ export class PaymentService {
           const plan = await this.priceModel.findOne({
             _id: dataExists.priceId,
           });
-          let days = plan.days;
-          let type = plan.type;
+          days = plan.days;
+          type = plan.type;
           if (plan.extraDays) {
+            gift = plan.extraDays;
             days += plan.extraDays;
           }
-          const expiryDate = new Date();
+          expiryDate = new Date();
           expiryDate.setDate(expiryDate.getDate() + days);
           let wallet = await this.walletModel.findOne({
             userId: dataExists.id,
@@ -145,7 +148,7 @@ export class PaymentService {
           );
           const date = new Date();
           date.setDate(date.getDate() + days);
-          await this.paymentModel.create({
+          const payment = await this.paymentModel.create({
             amount: dataExists.amount,
             type: type,
             at: new Date(),
@@ -153,6 +156,7 @@ export class PaymentService {
             userId: dataExists._id,
             plan: plan._id,
           });
+          id = payment.id;
           // let coupon;
           // if (plan.couponGift)
           //   coupon = await this.discountModel.findById(plan.couponGift);
@@ -181,12 +185,25 @@ export class PaymentService {
           // }
         }
       }
-      return response.redirect("https://salamatful.com/wallet-page");
+      return response.redirect(`https://salamatful.com/receipt/${id}`);
     } catch (error) {
-      console.error(error);
       return {
         code: -1,
         message: "Error occurred while checking payment status.",
+      };
+    }
+  }
+
+  async getReceipt(id): Promise<any> {
+    try {
+      if (id) {
+        return await this.paymentModel.findById(id);
+      }
+      return { code: 0, message: 'Id has been missed.' };
+    } catch (error) {
+      return {
+        code: -1,
+        message: "Error occurred while getting the receipt.",
       };
     }
   }
