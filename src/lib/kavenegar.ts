@@ -50,8 +50,6 @@ class Kavenegar {
   _generateEndpoint(method) {
     let apiBase = getEnv('KAVENEGAR_API_BASE');
     let apiKey = getEnv('KAVENEGAR_API_KEY');
-    console.log('url:');
-    console.log(`${apiBase}/${apiKey}/${method}`);
     return `${apiBase}/${apiKey}/${method}`;
   }
 }

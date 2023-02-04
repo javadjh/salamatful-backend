@@ -183,6 +183,8 @@ export class PaymentService {
           //     });
           //   }
           // }
+        } else {
+          return response.redirect(`https://salamatful.com/receipt/failed`);
         }
       }
       return response.redirect(`https://salamatful.com/receipt/${id}`);
@@ -197,6 +199,12 @@ export class PaymentService {
   async getReceipt(id): Promise<any> {
     try {
       if (id) {
+        if (id == 'failed') {
+          return {
+            code: -1,
+            message: 'تراکنش ناموفق'
+          }
+        }
         return await this.paymentModel.findById(id);
       }
       return { code: 0, message: 'Id has been missed.' };
