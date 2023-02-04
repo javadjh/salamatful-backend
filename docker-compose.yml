@@ -15,3 +15,8 @@ services:
       - "/var/www/salamatful.com/admin/public/audios:/home/node/public/audios"
       - "/var/www/salamatful.com/admin/public/images:/home/node/public/images"
       - "/var/www/salamatful.com/admin/public/videos:/home/node/public/videos"
+    environment:
+      - NODE_ENV=production
+      - KAVENEGAR_API_KEY=6437747A4B38423271357977414A6B6C6B6D484F666B6B584D57445475444538474E6E7777424A784F42633D
+      - KAVENEGAR_API_BASE=https://api.kavenegar.com/v1/
+      - KAVENEGAR_VERIFY_TEMPLATE=verification
