@@ -45,9 +45,9 @@ jobs:
           username: ${{ secrets.ARVAN_USERNAME }}
           password: ${{ secrets.ARVAN_PASSWORD }}
           script: |
-            sudo docker login -u gustavbadie -p "#Cykarush2"
-            sudo docker rmi gustavbadie/api.salamatful.ir:main
-            sudo docker pull gustavbadie/api.salamatful.ir:main
+            docker login -u gustavbadie -p "#Cykarush2"
+            docker rmi gustavbadie/api.salamatful.ir:main
+            docker pull gustavbadie/api.salamatful.ir:main
             cd /var/www/salamatful.com/api
-            sudo docker-compose down
-            sudo docker-compose up -d
+            docker-compose down
+            docker-compose up -d
