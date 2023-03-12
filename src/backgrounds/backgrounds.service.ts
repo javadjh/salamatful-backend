@@ -24,7 +24,9 @@ export class BackgroundsService {
         // @ts-ignore
         bg = bg[0]
         if (bg["url"]) {
-          return bg;
+          bg['file'] = {
+            path: bg['url']
+          }
         } else if (bg["file"]) {
           bg["file"].path = `${config.serverURL}${config.backgrounds}/${bg["file"].path}`;
           return bg;
