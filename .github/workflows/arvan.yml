@@ -16,10 +16,10 @@ jobs:
       - name: "Connect to the Server and Deploy the Project"
         uses: appleboy/ssh-action@v0.1.6
         with:
-          host: ${{ secrets.HOST }}
-          username: ${{ secrets.USERNAME }}
-          password: ${{ secrets.PASSWORD }}
-          port: ${{ secrets.PORT }}
+          host: ${{ secrets.ARVAN_HOST }}
+          username: ${{ secrets.ARVAN_USERNAME }}
+          password: ${{ secrets.ARVAN_PASSWORD }}
+          port: ${{ secrets.ARVAN_PORT }}
           script: |
             cd /var/www/api.salamatful.ir
             git checkout arvan
