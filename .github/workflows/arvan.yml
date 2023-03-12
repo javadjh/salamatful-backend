@@ -26,4 +26,4 @@ jobs:
             git pull origin arvan
             npm ci
             npm run build
-            
+            pm2 restart api
