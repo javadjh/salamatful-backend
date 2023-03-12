@@ -96,14 +96,13 @@ export class WalletService {
     };
   }
 
-  async redeem(userId: string, body: { paymentIds: string[] }) {
+  async redeem(userId: string) {
     try {
       const user = await this.userModel.findById(userId, "name");
-      if (user && body.paymentIds) {
+      if (user) {
         const dataExists = await this.paymentModel.find({
           $and: [
             { userId: userId },
-            { _id: { $in: body.paymentIds } },
             { valid: true },
             { to: { $lt: new Date() } },
           ],
@@ -113,7 +112,6 @@ export class WalletService {
             {
               $and: [
                 { userId: userId },
-                { _id: { $in: body.paymentIds } },
                 { valid: true },
                 { to: { $lt: new Date() } },
               ],

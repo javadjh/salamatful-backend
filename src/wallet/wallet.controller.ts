@@ -30,8 +30,8 @@ export class WalletController {
     res.json(await this.walletService.getPlan(res.locals.userId));
   }
 
-  @Post("/redeem")
-  async redeemCash(@Res() res: Response, @Body() body) {
-    res.json(await this.walletService.redeem(res.locals.userId, body));
+  @Get("/redeem")
+  async redeemCash(@Res() res: Response) {
+    res.json(await this.walletService.redeem(res.locals.userId));
   }
 }
