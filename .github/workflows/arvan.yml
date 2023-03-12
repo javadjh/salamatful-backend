@@ -1,53 +1,29 @@
-name: Salamatful-API:CI/CD
+name: Salamatful-API:CI/CD Arvan
 
 on:
   push:
-    branches: ["main"]
+    branches: ["arvan"]
 
 jobs:
   build:
-    name: "Build Image"
+    name: "Update Project"
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: "Log in to Docker Hub"
-        uses: docker/login-action@f054a8b539a109f9f41c372932f1ae047eff08c9
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_PASSWORD }}
-      - name: "Extract metadata (tags, labels) for Docker"
-        id: meta
-        uses: docker/metadata-action@98669ae865ea3cffbcbaa878cf57c20bbf1c6c38
-        with:
-          images: ${{ secrets.DOCKERHUB_USERNAME }}/api.salamatful.ir
-      - name: "Build and push Docker image"
-        uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
-        with:
-          context: .
-          push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
-      - name: copy file via ssh password
-        uses: appleboy/scp-action@master
-        with:
-          host: ${{ secrets.ARVAN_HOST }}
-          username: ${{ secrets.ARVAN_USERNAME }}
-          password: ${{ secrets.ARVAN_PASSWORD }}
-          source: "docker-compose.yml"
-          target: "/var/www/salamatful.com/api"
       - name: "Connect to the Server and Deploy the Project"
         uses: appleboy/ssh-action@v0.1.6
         with:
-          host: ${{ secrets.ARVAN_HOST }}
-          username: ${{ secrets.ARVAN_USERNAME }}
-          password: ${{ secrets.ARVAN_PASSWORD }}
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          password: ${{ secrets.PASSWORD }}
+          port: ${{ secrets.PORT }}
           script: |
-            docker login -u gustavbadie -p "#Cykarush2"
-            docker rmi gustavbadie/api.salamatful.ir:main
-            docker pull gustavbadie/api.salamatful.ir:main
-            cd /var/www/salamatful.com/api
-            docker-compose down
-            docker-compose up -d
+            cd /var/www/api.salamatful.ir
+            git checkout arvan
+            git pull origin arvan
+            npm ci
+            npm run build
+            
