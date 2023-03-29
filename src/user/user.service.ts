@@ -210,15 +210,17 @@ export class UserService {
     }
   }
 
-  async updateAvatar(userId: string, bg): Promise<any> {
+  async updateAvatar(userId: string, body): Promise<any> {
     try {
       const user = await this.UserModel.findById(userId);
+      const { background, filename } = body;
       if (user) {
-        if (bg) {
+        if (background && filename) {
           if (user.bg && user.bg.path) {
             await this.delete([user.bg.path], "profiles");
           }
-          const files = await this.save([bg], "profiles");
+          const file = base64ToFile(background, filename);
+          const files = await this.save([file], "profiles");
           await this.UserModel.updateOne(
             { _id: user._id },
             {
@@ -594,4 +596,16 @@ export class UserService {
 
     return sharp;
   }
+}
+
+function base64ToFile(dataurl, filename) {
+  let arr = dataurl.split(","),
+    mime = arr[0].match(/:(.*?);/)[1],
+    bstr = atob(arr[1]),
+    n = bstr.length,
+    u8arr = new Uint8Array(n);
+  while (n--) {
+    u8arr[n] = bstr.charCodeAt(n);
+  }
+  return new File([u8arr], filename, { type: mime });
 }

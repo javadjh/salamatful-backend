@@ -41,9 +41,9 @@ export class UserController {
   }
 
   @Put('/avatar')
-  @UseInterceptors(FileInterceptor('bg'))
-  async updateAvatar(@Res() res: Response, @UploadedFile() bg): Promise<any> {
-    res.json(await this.userServices.updateAvatar(res.locals.userId, bg));
+  // @UseInterceptors(FileInterceptor('bg'))
+  async updateAvatar(@Res() res: Response, @Body() body): Promise<any> {
+    res.json(await this.userServices.updateAvatar(res.locals.userId, body));
   }
 
   @Put('/name')
