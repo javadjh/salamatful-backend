@@ -213,19 +213,18 @@ export class UserService {
   async updateAvatar(userId: string, body): Promise<any> {
     try {
       const user = await this.UserModel.findById(userId);
-      const { background, filename } = body;
+      const { avatar, filename } = body;
       if (user) {
-        if (background && filename) {
+        if (avatar && filename) {
           if (user.bg && user.bg.path) {
             await this.delete([user.bg.path], "profiles");
           }
-          const file = base64ToFile(background, filename);
-          const files = await this.save([file], "profiles");
+          const file = base64ToFile(avatar, filename, "profiles");
           await this.UserModel.updateOne(
             { _id: user._id },
             {
-              bg: files[0],
-              bgURL: `${config.serverURL}${config.profiles}/${files[0].path}`,
+              bg: file,
+              bgURL: `${config.serverURL}${config.profiles}/${file.path}`,
             }
           );
         }
@@ -598,14 +597,21 @@ export class UserService {
   }
 }
 
-function base64ToFile(dataurl, filename) {
-  let arr = dataurl.split(","),
-    mime = arr[0].match(/:(.*?);/)[1],
-    bstr = atob(arr[1]),
-    n = bstr.length,
-    u8arr = new Uint8Array(n);
-  while (n--) {
-    u8arr[n] = bstr.charCodeAt(n);
+function base64ToFile(file, filename, dest) {
+  try {
+    const imageBuffer = new Buffer(file, "base64");
+    const fileExtension = filename.split(".").pop();
+    const prefix = config[dest] || config["defaultImages"];
+    const finalFilename = uuid.v1() + "." + fileExtension;
+    const pathToOutput = join(prefix, finalFilename);
+    const pathToWrite = join(finalPath, pathToOutput);
+    writeFileSync(pathToWrite, imageBuffer, { mode: 0o777, flag: "wx" });
+    return {
+      name: filename,
+      path: finalFilename,
+      mime: fileExtension,
+    };
+  } catch (error) {
+    console.error(error);
   }
-  return new File([u8arr], filename, { type: mime });
 }
