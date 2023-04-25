@@ -543,8 +543,7 @@ export class UserService {
       const prefix = dest ? config[dest] || config["defaultImages"] : "";
       if (!prefix) return false;
       for (let path of paths) {
-        if (!path.startsWith("public")) path = join(finalPath, prefix, path);
-
+        path = join(process.env.ROOT_DIR, finalPath, prefix, path);
         if (existsSync(path)) {
           unlinkSync(path);
         }
@@ -604,7 +603,7 @@ function base64ToFile(file, filename, dest) {
     const prefix = config[dest] || config["defaultImages"];
     const finalFilename = uuid.v1() + "." + fileExtension;
     const pathToOutput = join(prefix, finalFilename);
-    const pathToWrite = join(finalPath, pathToOutput);
+    const pathToWrite = join(process.env.ROOT_DIR, finalPath, pathToOutput);
     writeFileSync(pathToWrite, imageBuffer, { mode: 0o777, flag: "wx" });
     return {
       name: filename,
