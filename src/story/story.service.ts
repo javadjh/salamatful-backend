@@ -16,7 +16,7 @@ export class StoryService {
             if (stories) {
                 for (let story of stories) {
                     if (story.file) {
-                        story.file.path = `${config.serverURL}${config.storyFiles}/${story.file.path}`;
+                        story.url = `${config.serverURL}${config.storyFiles}/${story.file.path}`;
                     }
                 }
             }
