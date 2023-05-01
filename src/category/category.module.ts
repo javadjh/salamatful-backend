@@ -5,12 +5,14 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { CategorySchema } from './category.schema';
 import { CourseSchema } from 'src/course/course.schema';
 import { PurchaseSchema } from 'src/purchase/purchase.schema';
+import { UserSchema } from 'src/user/user.schema';
 
 @Module({
   imports: [MongooseModule.forFeature([
     { name: "Category", schema: CategorySchema },
     { name: "Course", schema: CourseSchema },
     { name: "Purchase", schema: PurchaseSchema },
+    { name: "User", schema: UserSchema },
   ])],
   controllers: [CategoryController],
   providers: [CategoryService],

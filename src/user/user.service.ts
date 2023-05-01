@@ -599,8 +599,22 @@ export class UserService {
 function base64ToFile(file, filename, dest) {
   try {
     const imageBuffer = new Buffer(file, "base64");
-    const fileExtension = filename.split(".").pop();
+    let fileExtension: string;
     const prefix = config[dest] || config["defaultImages"];
+    switch (file.characters.first) {
+      case "/":
+        fileExtension = "jpeg";
+      case "i":
+        fileExtension = "png";
+      case "R":
+        fileExtension = "gif";
+      case "U":
+        fileExtension = "webp";
+      case "J":
+        fileExtension = "pdf";
+      default:
+        fileExtension = "unknown";
+    }
     const finalFilename = uuid.v1() + "." + fileExtension;
     const pathToOutput = join(prefix, finalFilename);
     const pathToWrite = join(finalPath, pathToOutput);

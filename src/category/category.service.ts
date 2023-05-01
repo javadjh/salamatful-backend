@@ -5,6 +5,7 @@ import config from 'src/config';
 import { CourseDocument } from 'src/course/course.schema';
 import { PurchaseDocument } from 'src/purchase/purchase.schema';
 import { CategoryDocument } from './category.schema';
+import { UserDocument } from 'src/user/user.schema';
 
 @Injectable()
 export class CategoryService {
@@ -12,6 +13,7 @@ export class CategoryService {
     @InjectModel('Category') private categoryModel: Model<CategoryDocument>,
     @InjectModel('Course') private courseModel: Model<CourseDocument>,
     @InjectModel('Purchase') private purchaseModel: Model<PurchaseDocument>,
+    @InjectModel('User') private userModel: Model<UserDocument>,
   ) {}
   async findAll(): Promise<any> {
     try {
@@ -33,7 +35,7 @@ export class CategoryService {
     }
   }
 
-  async findBySlug(params): Promise<any> {
+  async findBySlug(params, userId): Promise<any> {
     try {
       const category = await this.categoryModel.findOne({ slug: params.slug });
       if (category) {
@@ -49,10 +51,13 @@ export class CategoryService {
               courseId,
               '_id name bg likes slug meta',
             );
+            const hasLikedBefore = await this.userModel.findOne({
+              $and: [{ _id: userId }, { fav: { $elemMatch: { cId: courseId } } }]
+            });
             if (course && course.bg) {
               course.bg.path = `${config.serverURL}${config.courseImages}/${course.bg.path}`;
             }
-            courses.push(course);
+            courses.push({ ...course, liked: Boolean(hasLikedBefore) });
           }
         }
         // generate category carousel images path
@@ -65,10 +70,13 @@ export class CategoryService {
                 courseId,
                 '_id name bg slug meta',
               );
+              const hasLikedBefore = await this.userModel.findOne({
+                $and: [{ _id: userId }, { fav: { $elemMatch: { cId: courseId } } }]
+              });
               if (course && course.bg) {
                 course.bg.path = `${config.serverURL}${config.courseImages}/${course.bg.path}`;
               }
-              carouselCourses.push(course);
+              carouselCourses.push({ ...course, liked: Boolean(hasLikedBefore) });
             }
             category.carousel[index].courses = carouselCourses;
             carouselCourses = [];
