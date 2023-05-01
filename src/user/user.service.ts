@@ -213,13 +213,13 @@ export class UserService {
   async updateAvatar(userId: string, body): Promise<any> {
     try {
       const user = await this.UserModel.findById(userId);
-      const { avatar, filename } = body;
+      const { avatar } = body;
       if (user) {
-        if (avatar && filename) {
+        if (avatar) {
           if (user.bg && user.bg.path) {
             await this.delete([user.bg.path], "profiles");
           }
-          const file = base64ToFile(avatar, filename, "profiles");
+          const file = base64ToFile(avatar, "profiles");
           await this.UserModel.updateOne(
             { _id: user._id },
             {
@@ -596,7 +596,7 @@ export class UserService {
   }
 }
 
-function base64ToFile(file, filename, dest) {
+function base64ToFile(file, dest) {
   try {
     const imageBuffer = new Buffer(file, "base64");
     let fileExtension: string;
@@ -620,7 +620,7 @@ function base64ToFile(file, filename, dest) {
     const pathToWrite = join(finalPath, pathToOutput);
     writeFileSync(pathToWrite, imageBuffer, { mode: 0o777, flag: "wx" });
     return {
-      name: filename,
+      name: `profile.${fileExtension}`,
       path: finalFilename,
       mime: fileExtension,
     };
