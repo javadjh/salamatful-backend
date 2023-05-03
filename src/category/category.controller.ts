@@ -13,6 +13,6 @@ export class CategoryController {
 
   @Get("/:slug")
   async getOne(@Param() params, @Res() res): Promise<any> {
-    return await this.categoryService.findBySlug(params, res.locals.userId);
+    res.json(await this.categoryService.findBySlug(params, res.locals.userId));
   }
 }
