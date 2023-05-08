@@ -184,10 +184,10 @@ export class PaymentService {
           //   }
           // }
         } else {
-          return response.redirect(`https://salamatful.com/receipt/failed`);
+          return response.redirect(`https://salamatful.ir/receipt/failed`);
         }
       }
-      return response.redirect(`https://salamatful.com/receipt/${id}`);
+      return response.redirect(`https://salamatful.ir/receipt/${id}`);
     } catch (error) {
       return {
         code: -1,
