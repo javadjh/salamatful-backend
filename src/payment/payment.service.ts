@@ -16,7 +16,7 @@ export const zarinpalRequestURL =
   "https://api.zarinpal.com/pg/v4/payment/request.json";
 export const zarinpalVerifyURL =
   "https://api.zarinpal.com/pg/v4/payment/verify.json";
-export const callBackURL = "https://salamatful.com";
+export const callBackURL = "https://salamatful.ir";
 export const merchantId = "822b28f0-78ea-42a9-a76c-6249ccc4da7e";
 
 // export const merchantId = '822b28f0-asdd-dssd-a76c-6249ccc4da7e';
