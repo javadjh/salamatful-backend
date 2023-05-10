@@ -63,7 +63,7 @@ export class PaymentService {
           merchant_id: merchantId,
           amount: price.amount,
           description: price.desc,
-          callback_url: "https://salamatful.com/api/v1/payment/check",
+          callback_url: "https://salamatful.ir/api/v1/payment/check",
         });
         res = res.data;
         if (res.data.code == 100) {
