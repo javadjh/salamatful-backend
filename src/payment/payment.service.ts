@@ -187,7 +187,9 @@ export class PaymentService {
           return response.redirect(`https://salamatful.ir/receipt/failed`);
         }
       }
-      return response.redirect(`https://salamatful.ir/receipt/${id}?refID=${RefID}`);
+      return response.redirect(
+        `https://salamatful.ir/receipt/${id}?refID=${RefID}`
+      );
     } catch (error) {
       return {
         code: -1,
@@ -199,15 +201,17 @@ export class PaymentService {
   async getReceipt(id): Promise<any> {
     try {
       if (id) {
-        if (id == 'failed') {
+        if (id == "failed") {
           return {
             code: -1,
-            message: 'تراکنش ناموفق'
-          }
+            message: "تراکنش ناموفق",
+          };
         }
-        return await this.paymentModel.findById(id);
+        const payment = await this.paymentModel.findById(id);
+        const plan = await this.priceModel.findById(payment.plan);
+        return { payment, plan };
       }
-      return { code: 0, message: 'Id has been missed.' };
+      return { code: 0, message: "Id has been missed." };
     } catch (error) {
       return {
         code: -1,
