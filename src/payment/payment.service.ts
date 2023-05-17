@@ -86,12 +86,12 @@ export class PaymentService {
   }
 
   async checkTransaction(
-    query: { Authority: string; Status: string },
+    query: { Authority: string; Status: string; RefID: string },
     response: Response
   ): Promise<any> {
     try {
       let expiryDate, days, type, gift, amount, id;
-      const { Authority, Status } = query;
+      const { Authority, Status, RefID } = query;
       const dataExists = await this.userModel.findOne(
         { authority: Authority },
         "_id id authority amount priceId phone callbackURL"
@@ -144,7 +144,7 @@ export class PaymentService {
           }
           await this.userModel.updateOne(
             { _id: dataExists._id, authority: Authority },
-            { sub: expiryDate, authority: `${Authority}-expired` }
+            { sub: expiryDate, authority: RefID }
           );
           const date = new Date();
           date.setDate(date.getDate() + days);
@@ -187,7 +187,7 @@ export class PaymentService {
           return response.redirect(`https://salamatful.ir/receipt/failed`);
         }
       }
-      return response.redirect(`https://salamatful.ir/receipt/${id}`);
+      return response.redirect(`https://salamatful.ir/receipt/${id}?refID=${RefID}`);
     } catch (error) {
       return {
         code: -1,

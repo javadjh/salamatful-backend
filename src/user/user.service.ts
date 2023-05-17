@@ -80,6 +80,7 @@ export class UserService {
     try {
       return await this.sendSMS({ phone, code });
     } catch (error) {
+      console.log(error);
       return { code: -1, message: error };
     }
   }
@@ -367,6 +368,7 @@ export class UserService {
       if (error.response) {
         message = error.response.data.return.message;
       }
+      console.log(error);
       return { code: -1, message };
     }
   }
