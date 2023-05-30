@@ -21,6 +21,7 @@ import { ProgressDocument } from "src/progress/progress.schema";
 import { AudioDocument } from "src/audio/audio.schema";
 import { VideoDocument } from "src/video/video.schema";
 import { WalletDocument } from "../wallet/wallet.schema";
+import { Sms } from "../utility/Sms";
 
 export const farazSmsURL = "https://ippanel.com/api/select";
 export const smsUsername = "09396057575";
@@ -357,10 +358,17 @@ export class UserService {
       let { phone, code } = data;
       phone = normalizePhoneNumber(phone);
 
-      const res = await kavenegar.sendVerificationSMS({
-        phone,
-        code,
-      });
+      // const res = await kavenegar.sendVerificationSMS({
+      //   phone,
+      //   code,
+      // });
+      await Sms.sendSms(
+        "verification",
+        {
+          token: code,
+        },
+        phone
+      );
 
       return { code: 1, message: "Code sent successfully" };
     } catch (error) {
@@ -556,7 +564,10 @@ export class UserService {
   }
 
   async compressAndSave({ input, fileOut, mimetype }): Promise<any> {
-    if (!config.imageCompression.enable || mime.extension(mimetype) === "gif") {
+    if (
+      !config.imageCompression.enable ||
+      mime.getExtension(mimetype) === "gif"
+    ) {
       return new Promise((resolve, reject) => {
         writeFileSync(fileOut, fileOut, { mode: 0o777, flag: "wx" });
         resolve("");
@@ -581,7 +592,7 @@ export class UserService {
   }
 
   async compressByMimeType(sharp, { mimetype, quality }): Promise<any> {
-    switch (mime.extension(mimetype)) {
+    switch (mime.getExtension(mimetype)) {
       case "jpeg":
         if (config.imageCompression.useWebpForJPEG) {
           return await sharp.webp({ quality });

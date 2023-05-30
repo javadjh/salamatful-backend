@@ -11,6 +11,7 @@ import { PurchaseDocument } from "src/purchase/purchase.schema";
 import { UserDocument } from "src/user/user.schema";
 import { WalletDocument } from "../wallet/wallet.schema";
 import { PaymentDocument } from "./payment.schema";
+import { Sms } from "src/utility/Sms";
 
 export const zarinpalRequestURL =
   "https://api.zarinpal.com/pg/v4/payment/request.json";
@@ -94,7 +95,7 @@ export class PaymentService {
       const { Authority, Status, RefID } = query;
       const dataExists = await this.userModel.findOne(
         { authority: Authority },
-        "_id id authority amount priceId phone callbackURL"
+        "_id id authority amount priceId phone callbackURL name"
       );
       if (dataExists) {
         amount = dataExists.amount;
@@ -157,6 +158,15 @@ export class PaymentService {
             plan: plan._id,
           });
           id = payment.id;
+          await Sms.sendSms(
+            "purchase",
+            {
+              token: dataExists.name,
+              token2: plan.extraDays.toString(),
+              token3: plan.extraDays.toString(),
+            },
+            dataExists.phone
+          );
           // let coupon;
           // if (plan.couponGift)
           //   coupon = await this.discountModel.findById(plan.couponGift);
