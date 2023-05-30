@@ -86,7 +86,7 @@ export class PaymentService {
   }
 
   async checkTransaction(
-    query: { Authority: string; Status: string; RefID: string },
+    query: { Authority: string; Status: string; RefID?: string },
     response: Response
   ): Promise<any> {
     try {
