@@ -564,10 +564,7 @@ export class UserService {
   }
 
   async compressAndSave({ input, fileOut, mimetype }): Promise<any> {
-    if (
-      !config.imageCompression.enable ||
-      mime.getExtension(mimetype) === "gif"
-    ) {
+    if (!config.imageCompression.enable || mime.extension(mimetype) === "gif") {
       return new Promise((resolve, reject) => {
         writeFileSync(fileOut, fileOut, { mode: 0o777, flag: "wx" });
         resolve("");
@@ -592,7 +589,7 @@ export class UserService {
   }
 
   async compressByMimeType(sharp, { mimetype, quality }): Promise<any> {
-    switch (mime.getExtension(mimetype)) {
+    switch (mime.extension(mimetype)) {
       case "jpeg":
         if (config.imageCompression.useWebpForJPEG) {
           return await sharp.webp({ quality });
