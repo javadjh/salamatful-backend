@@ -167,6 +167,9 @@ export class PaymentService {
             },
             dataExists.phone
           );
+          return response.redirect(
+            `https://salamatful.ir/receipt/${id}?refID=${RefID}`
+          );
           // let coupon;
           // if (plan.couponGift)
           //   coupon = await this.discountModel.findById(plan.couponGift);
@@ -201,6 +204,7 @@ export class PaymentService {
         `https://salamatful.ir/receipt/${id}?refID=${RefID}`
       );
     } catch (error) {
+      console.log(error);
       return {
         code: -1,
         message: "Error occurred while checking payment status.",
